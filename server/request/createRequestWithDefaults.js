@@ -6,9 +6,7 @@ const Bottleneck = require('bottleneck/es5');
 
 const { getLogger } = require('../logging');
 const { parseErrorToReadableJson } = require('../dataTransformations');
-
 const authenticateRequest = require('./authenticateRequest');
-const handleInsightsRequest403 = require('./handleInsightsRequest403');
 
 const _configFieldIsValid = (field) => typeof field === 'string' && field.length > 0;
 
@@ -48,9 +46,9 @@ const createRequestWithDefaults = () => {
 
     const _requestWithDefaults = (requestOptions) =>
       new Promise((resolve, reject) => {
-        defaultsRequest(requestOptions, (err, res, body) => {
+        defaultsRequest(requestOptions, (err, res) => {
           if (err) return reject(err);
-          resolve({ ...res, body });
+          resolve(res);
         });
       });
 
@@ -137,7 +135,15 @@ const createRequestWithDefaults = () => {
     }
   };
 
-  const requestDefaultsWithInterceptors = requestWithDefaultsBuilder(authenticateRequest);
+
+  const requestDefaultsWithInterceptors = requestWithDefaultsBuilder(
+    authenticateRequest,
+    undefined,
+    (error, RO) => {
+      //Handle 403 not enough credits in non-validate options query
+      throw error;
+    }
+  );
 
   return requestDefaultsWithInterceptors;
 };

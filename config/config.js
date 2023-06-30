@@ -2,7 +2,7 @@ module.exports = {
   name: 'WhoisXMLAPI',
   acronym: 'WXA',
   description: 'TODO',
-  entityTypes: ['domain'],
+  entityTypes: ['domain', 'string'],
   defaultColor: 'light-blue',
   styles: ['./client/styles.less'],
   block: {

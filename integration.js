@@ -19,11 +19,37 @@ const doLookup = async (entities, options, cb) => {
 
     const { searchableEntities, nonSearchableEntities } = organizeEntities(entities);
 
-    const {  } = await searchEntities(searchableEntities, options);
+    const {
+      whois,
+      dns,
+      dnsWhoisHistory,
+      domainAvailability,
+      domainSubDomain,
+      reverseNs,
+      reverseWhois
+    } = await searchEntities(searchableEntities, options);
 
-    Logger.trace({  });
+    Logger.trace({
+      whois,
+      dns,
+      dnsWhoisHistory,
+      domainAvailability,
+      domainSubDomain,
+      reverseNs,
+      reverseWhois
+    });
 
-    const lookupResults = assembleLookupResults(entities, options);
+    const lookupResults = assembleLookupResults(
+      entities,
+      whois,
+      dns,
+      dnsWhoisHistory,
+      domainAvailability,
+      domainSubDomain,
+      reverseNs,
+      reverseWhois,
+      options
+    );
 
     const ignoreResults = buildIgnoreResults(nonSearchableEntities);
 
