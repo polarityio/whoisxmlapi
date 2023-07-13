@@ -1,17 +1,22 @@
-# Polarity Bitsight Integration
+# Polarity WhoisXMLAPI Integration
 
-Bitsight is a cyber risk management leader transforming how companies manage exposure, performance, and risk for themselves and their third parties.
+WhoisXMLAPI has unique collection of cyber threat intelligence feeds have proven invaluable in augmenting the capabilities of commercial security platforms (SIEM, SOAR and TIP) and helping Security Operations Centers (SOCs) & Managed Security Service Providers (MSSPs) achieve superior network visibility.
 
-The Polarity Bitsight integration allows searching Bitsight for Companies by domain and includes the companies' Security Ratings.
+The WhoisXMLAPI Polarity Integration allows you to search WHOIS, Reverse WHOIS, DNS, WHOIS DNS History, Domain Purchase Availability, & Reverse NS, via Domains and by Annotations.
 
-To learn more about Bitsight, visit the [official website](https://www.bitsight.com/about/about-us).
 
-<img src="images/overlay.png" width="50%">
+<div style="display:flex; align-items: flex-start; justify-content:flex-start; align-items:flex-start;">
+  <img width="350" alt="Integration Example Domain" src="./images/domain-result.png">
+  <img width="350" alt="Integration Example Annotation" src="./images/string-result.png">
+</div>
 
-## Bitsight Integration Options
+To learn more about WhoisXMLAPI, visit the [official website](https://main.whoisxmlapi.com/).
 
-### Company API Key
-A Company API Key associated with your Bitsight Instance
+## WhoisXMLAPI Integration Options
+
+### API Key
+A Company API Key associated with your WhoisXMLAPI Instance
+
 
 
 ## Installation Instructions

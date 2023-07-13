@@ -21,32 +21,17 @@ const doLookup = async (entities, options, cb) => {
 
     const {
       whois,
-      dns,
-      dnsWhoisHistory,
-      domainAvailability,
-      domainSubDomain,
-      reverseNs,
       reverseWhois
     } = await searchEntities(searchableEntities, options);
 
     Logger.trace({
       whois,
-      dns,
-      dnsWhoisHistory,
-      domainAvailability,
-      domainSubDomain,
-      reverseNs,
       reverseWhois
     });
 
     const lookupResults = assembleLookupResults(
       entities,
       whois,
-      dns,
-      dnsWhoisHistory,
-      domainAvailability,
-      domainSubDomain,
-      reverseNs,
       reverseWhois,
       options
     );

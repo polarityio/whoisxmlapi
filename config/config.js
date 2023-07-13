@@ -1,7 +1,7 @@
 module.exports = {
   name: 'WhoisXMLAPI',
   acronym: 'WXA',
-  description: 'TODO',
+  description: 'The WhoisXMLAPI Polarity Integration allows you to search WHOIS, Reverse WHOIS, DNS, WHOIS DNS History, Domain Purchase Availability, & Reverse NS',
   entityTypes: ['domain', 'string'],
   defaultColor: 'light-blue',
   styles: ['./client/styles.less'],
@@ -18,8 +18,7 @@ module.exports = {
     key: '',
     passphrase: '',
     ca: '',
-    proxy: '',
-    rejectUnauthorized: true
+    proxy: ''
   },
   logging: {
     level: 'info' //trace, debug, info, warn, error, fatal

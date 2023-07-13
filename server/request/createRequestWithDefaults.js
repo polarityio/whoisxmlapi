@@ -5,7 +5,7 @@ const { get, isEmpty, getOr, identity } = require('lodash/fp');
 const Bottleneck = require('bottleneck/es5');
 
 const { getLogger } = require('../logging');
-const { parseErrorToReadableJson } = require('../dataTransformations');
+const { parseErrorToReadableJson, or } = require('../dataTransformations');
 const authenticateRequest = require('./authenticateRequest');
 
 const _configFieldIsValid = (field) => typeof field === 'string' && field.length > 0;
@@ -115,14 +115,18 @@ const createRequestWithDefaults = () => {
 
     const roundedStatus = Math.round(statusCode / 100) * 100;
     const statusCodeNotSuccessful = ![200].includes(roundedStatus);
-    const responseBodyError = get('error', body);
+    const responseBodyError = or(get('messages'), get('msg'))(body);
+
+    const statusCodeErrorMessages = {
+      401: ' -> Invalid API Key',
+      403: ' -> Access restricted. Check the credits balance via the link above'
+    };
 
     if (statusCodeNotSuccessful || responseBodyError) {
       const requestError = Error(
         `Request Error${
-          get('message', responseBodyError)
-            ? ` -> ${get('message', responseBodyError)}`
-            : ''
+          statusCodeErrorMessages[statusCode] ||
+          (responseBodyError ? ` -> ${responseBodyError}` : '')
         }`
       );
       requestError.status = statusCodeNotSuccessful
@@ -135,15 +139,7 @@ const createRequestWithDefaults = () => {
     }
   };
 
-
-  const requestDefaultsWithInterceptors = requestWithDefaultsBuilder(
-    authenticateRequest,
-    undefined,
-    (error, RO) => {
-      //Handle 403 not enough credits in non-validate options query
-      throw error;
-    }
-  );
+  const requestDefaultsWithInterceptors = requestWithDefaultsBuilder(authenticateRequest);
 
   return requestDefaultsWithInterceptors;
 };
