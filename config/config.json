@@ -1,4 +1,5 @@
 {
+  "polarityIntegrationUuid": "520ca730-21cc-11ee-9f1c-3b2a2ad7baa3",
   "name": "WhoisXMLAPI",
   "acronym": "WXA",
   "description": "The WhoisXMLAPI Polarity Integration allows you to search WHOIS, Reverse WHOIS, DNS, WHOIS DNS History, Domain Purchase Availability, & Reverse NS",
