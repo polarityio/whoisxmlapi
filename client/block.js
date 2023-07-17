@@ -89,7 +89,6 @@ polarity.export = PolarityComponent.extend({
         .writeText(text)
         .then(() => {
           this.set(`showCopySuccessCheck.${element}`, true);
-
         })
         .catch((err) => {
           console.log('Error in copying text: ', err);
@@ -97,7 +96,7 @@ polarity.export = PolarityComponent.extend({
         .finally(() => {
           setTimeout(() => {
             this.set(`showCopySuccessCheck.${element}`, false);
-          }, 20000);
+          }, 2000);
         });
     }
   },
