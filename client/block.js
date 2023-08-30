@@ -3,7 +3,6 @@ polarity.export = PolarityComponent.extend({
   timezone: Ember.computed('Intl', function () {
     return Intl.DateTimeFormat().resolvedOptions().timeZone;
   }),
-  activeTab: '',
   expandableTitleStates: {},
   showCopySuccessCheck: {},
   displayTabNames: {
@@ -24,14 +23,24 @@ polarity.export = PolarityComponent.extend({
     'domainSubDomain',
     'reverseNs'
   ],
+  displayReverseWhois: [],
   getDefaultActiveTab() {
     const details = this.get('details');
     return this.get('tabRenderOrder').find((tab) => details[tab] && details[tab].length);
   },
-
-  displayReverseWhois: [],
   init() {
-    this.set('activeTab', this.getDefaultActiveTab() || this.get('tabRenderOrder')[0]);
+    if (!this.get('block._state')) {
+      this.set('block._state', {});
+      this.set(
+        'block._state.activeTab',
+        this.getDefaultActiveTab() || this.get('tabRenderOrder')[0]
+      );
+      this.set('block._state.dnsHasBeenObtained', false);
+      this.set('block._state.dnsWhoisHistoryHasBeenObtained', false);
+      this.set('block._state.domainAvailabilityHasBeenObtained', false);
+      this.set('block._state.domainSubDomainHasBeenObtained', false);
+      this.set('block._state.reverseNsHasBeenObtained', false);
+    }
 
     const reverseWhois = this.get('details.reverseWhois');
     if (reverseWhois && reverseWhois.length)
@@ -42,18 +51,25 @@ polarity.export = PolarityComponent.extend({
 
   actions: {
     changeTab: function (tabName) {
-      this.set('activeTab', tabName);
-      if (tabName === 'dns' && !this.get('dnsHasBeenObtained')) return this.getDns();
-      if (tabName === 'dnsWhoisHistory' && !this.get('dnsWhoisHistoryHasBeenObtained'))
+      this.set('block._state.activeTab', tabName);
+      if (tabName === 'dns' && !this.get('block._state.dnsHasBeenObtained'))
+        return this.getDns();
+      if (
+        tabName === 'dnsWhoisHistory' &&
+        !this.get('block._state.dnsWhoisHistoryHasBeenObtained')
+      )
         return this.getDnsWhoisHistory();
       if (
         tabName === 'domainAvailability' &&
-        !this.get('domainAvailabilityHasBeenObtained')
+        !this.get('block._state.domainAvailabilityHasBeenObtained')
       )
         return this.getDomainAvailability();
-      if (tabName === 'domainSubDomain' && !this.get('domainSubDomainHasBeenObtained'))
+      if (
+        tabName === 'domainSubDomain' &&
+        !this.get('block._state.domainSubDomainHasBeenObtained')
+      )
         return this.getDomainSubDomain();
-      if (tabName === 'reverseNs' && !this.get('reverseNsHasBeenObtained'))
+      if (tabName === 'reverseNs' && !this.get('block._state.reverseNsHasBeenObtained'))
         return this.getReverseNs();
     },
     toggleExpandableTitle: function () {
@@ -105,7 +121,6 @@ polarity.export = PolarityComponent.extend({
   dnsFailureMessage: '',
   gettingDnsErrorMessage: '',
   getDnsIsRunning: false,
-  dnsHasBeenObtained: false,
 
   getDns: function () {
     const outerThis = this;
@@ -121,10 +136,10 @@ polarity.export = PolarityComponent.extend({
         this.set('dns', dns);
 
         this.set('dnsFailureMessage', failureMessage);
-        this.set('dnsHasBeenObtained', true);
+        this.set('block._state.dnsHasBeenObtained', true);
       })
       .catch((err) => {
-        this.set('dnsHasBeenObtained', false);
+        this.set('block._state.dnsHasBeenObtained', false);
         outerThis.set(
           'gettingDnsErrorMessage',
           `Failed to Get Dns: ${
@@ -144,7 +159,6 @@ polarity.export = PolarityComponent.extend({
   dnsWhoisHistoryFailureMessage: '',
   gettingDnsWhoisHistoryErrorMessage: '',
   getDnsWhoisHistoryIsRunning: false,
-  dnsWhoisHistoryHasBeenObtained: false,
 
   getDnsWhoisHistory: function () {
     const outerThis = this;
@@ -160,10 +174,10 @@ polarity.export = PolarityComponent.extend({
         this.set('dnsWhoisHistory', dnsWhoisHistory);
 
         this.set('dnsWhoisHistoryFailureMessage', failureMessage);
-        this.set('dnsWhoisHistoryHasBeenObtained', true);
+        this.set('block._state.dnsWhoisHistoryHasBeenObtained', true);
       })
       .catch((err) => {
-        this.set('dnsWhoisHistoryHasBeenObtained', false);
+        this.set('block._state.dnsWhoisHistoryHasBeenObtained', false);
         outerThis.set(
           'gettingDnsWhoisHistoryErrorMessage',
           `Failed to Get DNS WHOIS History: ${
@@ -183,7 +197,6 @@ polarity.export = PolarityComponent.extend({
   domainAvailabilityFailureMessage: '',
   gettingDomainAvailabilityErrorMessage: '',
   getDomainAvailabilityIsRunning: false,
-  domainAvailabilityHasBeenObtained: false,
 
   getDomainAvailability: function () {
     const outerThis = this;
@@ -199,10 +212,10 @@ polarity.export = PolarityComponent.extend({
         this.set('domainAvailability', domainAvailability);
 
         this.set('domainAvailabilityFailureMessage', failureMessage);
-        this.set('domainAvailabilityHasBeenObtained', true);
+        this.set('block._state.domainAvailabilityHasBeenObtained', true);
       })
       .catch((err) => {
-        this.set('domainAvailabilityHasBeenObtained', false);
+        this.set('block._state.domainAvailabilityHasBeenObtained', false);
         outerThis.set(
           'gettingDomainAvailabilityErrorMessage',
           `Failed to Get SubDomains: ${
@@ -223,7 +236,6 @@ polarity.export = PolarityComponent.extend({
   domainSubDomainFailureMessage: '',
   gettingDomainSubDomainErrorMessage: '',
   getDomainSubDomainIsRunning: false,
-  domainSubDomainHasBeenObtained: false,
 
   getDomainSubDomain: function () {
     const outerThis = this;
@@ -240,10 +252,10 @@ polarity.export = PolarityComponent.extend({
         this.set('displaySubDomains', domainSubDomain.slice(0, 20));
 
         this.set('domainSubDomainFailureMessage', failureMessage);
-        this.set('domainSubDomainHasBeenObtained', true);
+        this.set('block._state.domainSubDomainHasBeenObtained', true);
       })
       .catch((err) => {
-        this.set('domainSubDomainHasBeenObtained', false);
+        this.set('block._state.domainSubDomainHasBeenObtained', false);
         outerThis.set(
           'gettingDomainSubDomainErrorMessage',
           `Failed to Get SubDomains: ${
@@ -264,7 +276,6 @@ polarity.export = PolarityComponent.extend({
   reverseNsFailureMessage: '',
   gettingReverseNsErrorMessage: '',
   getReverseNsIsRunning: false,
-  reverseNsHasBeenObtained: false,
 
   getReverseNs: function () {
     const outerThis = this;
@@ -281,10 +292,10 @@ polarity.export = PolarityComponent.extend({
         this.set('displayReverseNs', reverseNs.slice(0, 20));
 
         this.set('reverseNsFailureMessage', failureMessage);
-        this.set('reverseNsHasBeenObtained', true);
+        this.set('block._state.reverseNsHasBeenObtained', true);
       })
       .catch((err) => {
-        this.set('reverseNsHasBeenObtained', false);
+        this.set('block._state.reverseNsHasBeenObtained', false);
         outerThis.set(
           'gettingReverseNsErrorMessage',
           `Failed to Get Reverse NS: ${

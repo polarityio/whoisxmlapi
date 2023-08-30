@@ -14,7 +14,7 @@
       <li class="nav-item">
         <a
           {{action "changeTab" "reverseWhois"}}
-          class="nav-link {{if (eq activeTab 'reverseWhois') 'active'}}"
+          class="nav-link {{if (eq block._state.activeTab 'reverseWhois') 'active'}}"
           href="#"
         >
           {{get displayTabNames "reverseWhois"}}
@@ -26,7 +26,7 @@
       <li class="nav-item">
         <a
           {{action "changeTab" "whois"}}
-          class="nav-link {{if (eq activeTab 'whois') 'active'}}"
+          class="nav-link {{if (eq block._state.activeTab 'whois') 'active'}}"
           href="#"
         >
           {{get displayTabNames "whois"}}
@@ -36,7 +36,7 @@
     <li class="nav-item">
       <a
         {{action "changeTab" "dns"}}
-        class="nav-link {{if (eq activeTab 'dns') 'active'}}"
+        class="nav-link {{if (eq block._state.activeTab 'dns') 'active'}}"
         href="#"
       >
         {{get displayTabNames "dns"}}
@@ -48,7 +48,7 @@
     <li class="nav-item">
       <a
         {{action "changeTab" "dnsWhoisHistory"}}
-        class="nav-link {{if (eq activeTab 'dnsWhoisHistory') 'active'}}"
+        class="nav-link {{if (eq block._state.activeTab 'dnsWhoisHistory') 'active'}}"
         href="#"
       >
         {{get displayTabNames "dnsWhoisHistory"}}
@@ -60,7 +60,7 @@
     <li class="nav-item">
       <a
         {{action "changeTab" "domainAvailability"}}
-        class="nav-link {{if (eq activeTab 'domainAvailability') 'active'}}"
+        class="nav-link {{if (eq block._state.activeTab 'domainAvailability') 'active'}}"
         href="#"
       >
         {{get displayTabNames "domainAvailability"}}
@@ -72,7 +72,7 @@
     <li class="nav-item">
       <a
         {{action "changeTab" "domainSubDomain"}}
-        class="nav-link {{if (eq activeTab 'domainSubDomain') 'active'}}"
+        class="nav-link {{if (eq block._state.activeTab 'domainSubDomain') 'active'}}"
         href="#"
       >
         {{get displayTabNames "domainSubDomain"}}
@@ -84,7 +84,7 @@
     <li class="nav-item">
       <a
         {{action "changeTab" "reverseNs"}}
-        class="nav-link {{if (eq activeTab 'reverseNs') 'active'}}"
+        class="nav-link {{if (eq block._state.activeTab 'reverseNs') 'active'}}"
         href="#"
       >
         {{get displayTabNames "reverseNs"}}
@@ -97,7 +97,7 @@
 </ul>
 <br />
 
-{{#if (eq activeTab "whois")}}
+{{#if (eq block._state.activeTab "whois")}}
   {{#with details.whois as |whois|}}
     <div class="whois">
       {{#if whois.domainName}}
@@ -556,7 +556,7 @@
   {{/with}}
 {{/if}}
 
-{{#if (eq activeTab "reverseWhois")}}
+{{#if (eq block._state.activeTab "reverseWhois")}}
   <div class="reverse-whois">
     {{#each displayReverseWhois as |reverseWhois reverseWhoisIndex|}}
       <div class="reverse-whois-item">
@@ -590,7 +590,7 @@
 {{/if}}
 
 {{! Expand On Message Tabs }}
-{{#if (eq activeTab "dns")}}
+{{#if (eq block._state.activeTab "dns")}}
   <div class="dns">
     {{#if getDnsIsRunning}}
       {{fa-icon "spinner-third" size="lg" fixedWidth=true spin=true}}
@@ -602,7 +602,7 @@
       <div class="failure-response">
         {{dnsFailureMessage}}
       </div>
-    {{else if dnsHasBeenObtained}}
+    {{else if block._state.dnsHasBeenObtained}}
       {{#if (not dns.dnsRecords.length)}}
         <span class="no-results">No Results Found</span>
       {{else}}
@@ -671,7 +671,7 @@
   </div>
 {{/if}}
 
-{{#if (eq activeTab "dnsWhoisHistory")}}
+{{#if (eq block._state.activeTab "dnsWhoisHistory")}}
   <div class="dns-whois-history">
     {{#if getDnsWhoisHistoryIsRunning}}
       {{fa-icon "spinner-third" size="lg" fixedWidth=true spin=true}}
@@ -683,7 +683,7 @@
       <div class="failure-response">
         {{dnsWhoisHistoryFailureMessage}}
       </div>
-    {{else if dnsWhoisHistoryHasBeenObtained}}
+    {{else if block._state.dnsWhoisHistoryHasBeenObtained}}
       {{#if (not dnsWhoisHistory.length)}}
         <span class="no-results">No Results Found</span>
       {{else}}
@@ -1548,7 +1548,7 @@
   </div>
 {{/if}}
 
-{{#if (eq activeTab "domainAvailability")}}
+{{#if (eq block._state.activeTab "domainAvailability")}}
   <div class="domain-availability">
     {{#if getDomainAvailabilityIsRunning}}
       {{fa-icon "spinner-third" size="lg" fixedWidth=true spin=true}}
@@ -1560,7 +1560,7 @@
       <div class="failure-response">
         {{domainAvailabilityFailureMessage}}
       </div>
-    {{else if domainAvailabilityHasBeenObtained}}
+    {{else if block._state.domainAvailabilityHasBeenObtained}}
       <div class="domain-availability-content">
         {{#if domainAvailability.domainName}}
           <h1 class="p-title">
@@ -1579,7 +1579,7 @@
   </div>
 {{/if}}
 
-{{#if (eq activeTab "domainSubDomain")}}
+{{#if (eq block._state.activeTab "domainSubDomain")}}
   <div class="domain-subdomain">
     {{#if getDomainSubDomainIsRunning}}
       {{fa-icon "spinner-third" size="lg" fixedWidth=true spin=true}}
@@ -1591,7 +1591,7 @@
       <div class="failure-response">
         {{domainSubDomainFailureMessage}}
       </div>
-    {{else if domainSubDomainHasBeenObtained}}
+    {{else if block._state.domainSubDomainHasBeenObtained}}
       {{#if (not displaySubDomains.length)}}
         <span class="no-results">No Results Found</span>
       {{else}}
@@ -1625,7 +1625,7 @@
   </div>
 {{/if}}
 
-{{#if (eq activeTab "reverseNs")}}
+{{#if (eq block._state.activeTab "reverseNs")}}
   <div class="reverse-ns">
     {{#if getReverseNsIsRunning}}
       {{fa-icon "spinner-third" size="lg" fixedWidth=true spin=true}}
@@ -1637,7 +1637,7 @@
       <div class="failure-response">
         {{reverseNsFailureMessage}}
       </div>
-    {{else if reverseNsHasBeenObtained}}
+    {{else if block._state.reverseNsHasBeenObtained}}
       <div class="reverse-ns-content">
         {{#if (not displayReverseNs.length)}}
           <span class="no-results">No Results Found</span>
