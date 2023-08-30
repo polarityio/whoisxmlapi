@@ -1,5 +1,12 @@
 polarity.export = PolarityComponent.extend({
   details: Ember.computed.alias('block.data.details'),
+  dns: Ember.computed.alias('block.data.details.dns'),
+  dnsWhoisHistory: Ember.computed.alias('block.data.details.dnsWhoisHistory'),
+  domainAvailability: Ember.computed.alias('block.data.details.domainAvailability'),
+  domainSubDomain: Ember.computed.alias('block.data.details.domainSubDomain'),
+  displaySubDomains: Ember.computed.alias('block.data.details.displaySubDomains'),
+  reverseNs: Ember.computed.alias('block.data.details.reverseNs'),
+  displayReverseNs: Ember.computed.alias('block.data.details.displayReverseNs'),
   timezone: Ember.computed('Intl', function () {
     return Intl.DateTimeFormat().resolvedOptions().timeZone;
   }),
@@ -117,7 +124,6 @@ polarity.export = PolarityComponent.extend({
     }
   },
 
-  dns: {},
   dnsFailureMessage: '',
   gettingDnsErrorMessage: '',
   getDnsIsRunning: false,
@@ -133,7 +139,7 @@ polarity.export = PolarityComponent.extend({
       data: { entity: this.get('block.entity') }
     })
       .then(({ dns, failureMessage }) => {
-        this.set('dns', dns);
+        this.set('details.dns', dns);
 
         this.set('dnsFailureMessage', failureMessage);
         this.set('block._state.dnsHasBeenObtained', true);
@@ -155,7 +161,6 @@ polarity.export = PolarityComponent.extend({
       });
   },
 
-  dnsWhoisHistory: [],
   dnsWhoisHistoryFailureMessage: '',
   gettingDnsWhoisHistoryErrorMessage: '',
   getDnsWhoisHistoryIsRunning: false,
@@ -171,7 +176,7 @@ polarity.export = PolarityComponent.extend({
       data: { entity: this.get('block.entity') }
     })
       .then(({ dnsWhoisHistory, failureMessage }) => {
-        this.set('dnsWhoisHistory', dnsWhoisHistory);
+        this.set('details.dnsWhoisHistory', dnsWhoisHistory);
 
         this.set('dnsWhoisHistoryFailureMessage', failureMessage);
         this.set('block._state.dnsWhoisHistoryHasBeenObtained', true);
@@ -193,7 +198,6 @@ polarity.export = PolarityComponent.extend({
       });
   },
 
-  domainAvailability: [],
   domainAvailabilityFailureMessage: '',
   gettingDomainAvailabilityErrorMessage: '',
   getDomainAvailabilityIsRunning: false,
@@ -209,7 +213,7 @@ polarity.export = PolarityComponent.extend({
       data: { entity: this.get('block.entity') }
     })
       .then(({ domainAvailability, failureMessage }) => {
-        this.set('domainAvailability', domainAvailability);
+        this.set('details.domainAvailability', domainAvailability);
 
         this.set('domainAvailabilityFailureMessage', failureMessage);
         this.set('block._state.domainAvailabilityHasBeenObtained', true);
@@ -231,8 +235,6 @@ polarity.export = PolarityComponent.extend({
       });
   },
 
-  domainSubDomain: [],
-  displaySubDomains: [],
   domainSubDomainFailureMessage: '',
   gettingDomainSubDomainErrorMessage: '',
   getDomainSubDomainIsRunning: false,
@@ -248,8 +250,8 @@ polarity.export = PolarityComponent.extend({
       data: { entity: this.get('block.entity') }
     })
       .then(({ domainSubDomain, failureMessage }) => {
-        this.set('domainSubDomain', domainSubDomain);
-        this.set('displaySubDomains', domainSubDomain.slice(0, 20));
+        this.set('details.domainSubDomain', domainSubDomain);
+        this.set('details.displaySubDomains', domainSubDomain.slice(0, 20));
 
         this.set('domainSubDomainFailureMessage', failureMessage);
         this.set('block._state.domainSubDomainHasBeenObtained', true);
@@ -271,8 +273,6 @@ polarity.export = PolarityComponent.extend({
       });
   },
 
-  reverseNs: [],
-  displayReverseNs: [],
   reverseNsFailureMessage: '',
   gettingReverseNsErrorMessage: '',
   getReverseNsIsRunning: false,
@@ -288,8 +288,8 @@ polarity.export = PolarityComponent.extend({
       data: { entity: this.get('block.entity') }
     })
       .then(({ reverseNs, failureMessage }) => {
-        this.set('reverseNs', reverseNs);
-        this.set('displayReverseNs', reverseNs.slice(0, 20));
+        this.set('details.reverseNs', reverseNs);
+        this.set('details.displayReverseNs', reverseNs.slice(0, 20));
 
         this.set('reverseNsFailureMessage', failureMessage);
         this.set('block._state.reverseNsHasBeenObtained', true);
