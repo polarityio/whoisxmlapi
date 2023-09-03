@@ -1,13 +1,18 @@
-const { get, eq, filter, flow } = require('lodash/fp');
+const { __, includes, get, eq, filter, flow } = require('lodash/fp');
 const { getWhois, getReverseWhois } = require('./queries');
+const { getLogger } = require('./logging');
 
 const searchEntities = async (entities, options) => {
-  const domainEntities = getEntitiesOfType('domain', entities);
-  const stringEntities = getEntitiesOfType('string', entities);
+  const Logger = getLogger();
+
+  const domainAndIpEntities = getEntitiesOfType(['IPv4', 'domain'], entities);
+  const stringAndEmailEntities = getEntitiesOfType(['email', 'string'], entities);
+
+  Logger.trace({ domainAndIpEntities, stringAndEmailEntities }, 'Sorted Entities for Lookup');
 
   const [whois, reverseWhois] = await Promise.all([
-    getWhois(domainEntities, options),
-    getReverseWhois(stringEntities, options)
+    getWhois(domainAndIpEntities, options),
+    getReverseWhois(stringAndEmailEntities, options)
   ]);
 
   return {
@@ -16,7 +21,7 @@ const searchEntities = async (entities, options) => {
   };
 };
 
-const getEntitiesOfType = (type, entities) =>
-  filter(flow(get('type'), eq(type)), entities);
+const getEntitiesOfType = (types, entities) =>
+  filter(flow(get('type'), includes(__, types)), entities);
 
 module.exports = searchEntities;
