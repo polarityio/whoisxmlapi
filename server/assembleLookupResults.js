@@ -1,4 +1,6 @@
 const { flow, get, size, find, eq, map, some, getOr } = require('lodash/fp');
+const { DateTime } = require('luxon');
+const { getLogger } = require('./logging');
 
 const assembleLookupResults = (entities, whois, reverseWhois, options) =>
   map((entity) => {
@@ -35,14 +37,28 @@ const getResultsForThisEntity = (entity, whois, reverseWhois) => {
 };
 
 const createSummaryTags = ({ whois, reverseWhois }, options) => {
+  let tags = [];
+
+  const registrant = getOr(null, 'registrant.organization', whois);
+  const createdDate = getOr(null, 'createdDate', whois);
   const reverseWhoisCount = size(reverseWhois);
-  const whoisStatus = getOr('', 'status', whois);
-  const whoisStatusTrimmed = `${whoisStatus.slice(0, 40)}${
-    whoisStatus.length > 40 ? '...' : ''
-  }`;
-  return []
-    .concat(whoisStatus ? whoisStatusTrimmed : [])
-    .concat(reverseWhoisCount ? `Reverse WHOIS (${reverseWhoisCount})` : []);
+
+  if (registrant) {
+    tags.push(registrant);
+  }
+
+  if (createdDate) {
+    const date = DateTime.fromISO(createdDate);
+    const humanReadableCreated = date.toLocaleString(DateTime.DATE_SHORT);
+
+    tags.push(`Created: ${humanReadableCreated}`);
+  }
+
+  if (reverseWhoisCount) {
+    tags.push(`Reverse WHOIS: (${reverseWhoisCount})`);
+  }
+
+  return tags;
 };
 
 module.exports = assembleLookupResults;
