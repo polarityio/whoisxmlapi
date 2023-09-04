@@ -6,10 +6,7 @@ const searchEntities = async (entities, options) => {
   const Logger = getLogger();
 
   const domainAndIpEntities = getEntitiesOfType(['IPv4', 'domain'], entities);
-  const stringEmailCustomEntities = getEntitiesOfType(
-    ['email', 'string', 'custom'],
-    entities
-  );
+  const stringEmailCustomEntities = getReverseWhoisLookupEntities(entities);
 
   Logger.trace(
     { domainAndIpEntities, stringEmailCustomEntities },
@@ -32,6 +29,24 @@ const getEntitiesOfType = (types, entities) => {
     return get('types', entity).some((type) => {
       return types.includes(type);
     });
+  }, entities);
+};
+
+const getWhoisLookupEntities = (entities) => {};
+
+/**
+ * Reverse WHOIS lookups should be run for entities of type email, string and custom (all text).
+ * However, since `string` and `custom` can also match domains and IPs, we need to ensure we're
+ * only returning entities that are `string` and `custom` but not `domain` or `IPv4`.
+ * @param entities
+ */
+const getReverseWhoisLookupEntities = (entities) => {
+  filter((entity) => {
+    return (
+      (entity.type === 'custom' || entity.isEmail || entity.type === 'string') &&
+      !entity.isDomain &&
+      !entity.isIP
+    );
   }, entities);
 };
 
