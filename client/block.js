@@ -12,15 +12,6 @@ polarity.export = PolarityComponent.extend({
   }),
   expandableTitleStates: {},
   showCopySuccessCheck: {},
-  displayTabNames: {
-    whois: 'WHOIS',
-    reverseWhois: 'Reverse WHOIS',
-    dns: 'DNS Lookup',
-    dnsWhoisHistory: 'WHOIS History',
-    domainAvailability: 'Domain Availability',
-    domainSubDomain: 'Subdomain Discovery',
-    reverseNs: 'Reverse NS'
-  },
   tabRenderOrder: [
     'whois',
     'reverseWhois',
@@ -55,7 +46,6 @@ polarity.export = PolarityComponent.extend({
 
     this._super(...arguments);
   },
-
   actions: {
     changeTab: function (tabName) {
       this.set('block._state.activeTab', tabName);
