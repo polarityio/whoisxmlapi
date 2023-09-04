@@ -9,18 +9,16 @@
 </div>
 
 <ul class="nav nav-tabs">
-  {{#if (or (eq block.entity.type "string")(eq block.entity.type "email"))}}
-    {{#if (get details "reverseWhois" "length")}}
-      <li class="nav-item">
-        <a
-          {{action "changeTab" "reverseWhois"}}
-          class="nav-link {{if (eq block._state.activeTab 'reverseWhois') 'active'}}"
-          href="#"
-        >
-          Reverse WHOIS
-        </a>
-      </li>
-    {{/if}}
+  {{#if (get details "reverseWhois" "length")}}
+    <li class="nav-item">
+      <a
+        {{action "changeTab" "reverseWhois"}}
+        class="nav-link {{if (eq block._state.activeTab 'reverseWhois') 'active'}}"
+        href="#"
+      >
+        Reverse WHOIS
+      </a>
+    </li>
   {{else}}
     {{#if (get details "whois" "length")}}
       <li class="nav-item">
@@ -100,13 +98,12 @@
     </li>
   {{/if}}
 </ul>
-<br />
 
 {{#if (eq block._state.activeTab "whois")}}
   {{#with details.whois as |whois|}}
-    <div class="whois">
+    <div class="whois mt-2">
       {{#if whois.domainName}}
-        <h1 class="p-title">
+        <h1 class="p-title mt-0">
           {{fa-icon icon="location-arrow" class="icon" fixedWidth=true}}
           {{whois.domainName}}
         </h1>
@@ -173,71 +170,140 @@
         </div>
       {{/if}}
 
-      <br />
-
-      {{#if (or whois.createdDateNormalized whois.createdDate)}}
-        <div>
-          <span class="p-key">Created Date: </span>
-          <span class="p-value">{{#if
-              whois.createdDateNormalized
-            }}{{whois.createdDateNormalized}}{{else}}{{moment-format
-                whois.createdDate
-                "MM/DD/YYYY HH:mm:ss"
-                timeZone=timezone
-              }}{{/if}}
-          </span>
+      {{#if whoisHasDates}}
+        <div class="mt-2">
+          {{#if (or whois.createdDateNormalized whois.createdDate)}}
+            <div>
+              <span class="p-key">Created Date: </span>
+              <span class="p-value">{{#if
+                  whois.createdDateNormalized
+                }}{{whois.createdDateNormalized}}{{else}}{{moment-format
+                    whois.createdDate
+                    "MM/DD/YYYY HH:mm:ss"
+                    timeZone=timezone
+                  }}{{/if}}
+              </span>
+            </div>
+          {{/if}}
+          {{#if (or whois.updatedDateNormalized whois.updatedDate)}}
+            <div>
+              <span class="p-key">Updated Date: </span>
+              <span class="p-value">{{#if
+                  whois.updatedDateNormalized
+                }}{{whois.updatedDateNormalized}}{{else}}{{moment-format
+                    whois.updatedDate
+                    "MM/DD/YYYY HH:mm:ss"
+                    timeZone=timezone
+                  }}{{/if}}
+              </span>
+            </div>
+          {{/if}}
+          {{#if (or whois.expiresDateNormalized whois.expiresDate)}}
+            <div>
+              <span class="p-key">Expires Date: </span>
+              <span class="p-value">{{#if
+                  whois.expiresDateNormalized
+                }}{{whois.expiresDateNormalized}}{{else}}{{moment-format
+                    whois.expiresDate
+                    "MM/DD/YYYY HH:mm:ss"
+                    timeZone=timezone
+                  }}{{/if}}
+              </span>
+            </div>
+          {{/if}}
+          {{#if whois.audit.createdDate}}
+            <div>
+              <span class="p-key">Audit Created Date: </span>
+              <span class="p-value">{{whois.audit.createdDate}}</span>
+            </div>
+          {{/if}}
+          {{#if whois.audit.updatedDate}}
+            <div>
+              <span class="p-key">Audit Updated Date: </span>
+              <span class="p-value">{{whois.audit.updatedDate}}</span>
+            </div>
+          {{/if}}
         </div>
       {{/if}}
-      {{#if (or whois.updatedDateNormalized whois.updatedDate)}}
-        <div>
-          <span class="p-key">Updated Date: </span>
-          <span class="p-value">{{#if
-              whois.updatedDateNormalized
-            }}{{whois.updatedDateNormalized}}{{else}}{{moment-format
-                whois.updatedDate
-                "MM/DD/YYYY HH:mm:ss"
-                timeZone=timezone
-              }}{{/if}}
-          </span>
-        </div>
-      {{/if}}
-      {{#if (or whois.expiresDateNormalized whois.expiresDate)}}
-        <div>
-          <span class="p-key">Expires Date: </span>
-          <span class="p-value">{{#if
-              whois.expiresDateNormalized
-            }}{{whois.expiresDateNormalized}}{{else}}{{moment-format
-                whois.expiresDate
-                "MM/DD/YYYY HH:mm:ss"
-                timeZone=timezone
-              }}{{/if}}
-          </span>
+
+      {{#if (gt whois.customFields.length 0)}}
+        <div class="mt-2">
+          {{#each whois.customFields as |customField|}}
+            <div>
+              <span class="p-key">{{titleize (humanize (dasherize customField.name))}}:
+              </span>
+              <span class="p-value">{{customField.value}}</span>
+            </div>
+          {{/each}}
         </div>
       {{/if}}
 
-      {{#if whois.audit.createdDate}}
-        <div>
-          <span class="p-key">Audit Created Date: </span>
-          <span class="p-value">{{whois.audit.createdDate}}</span>
-        </div>
+      {{#if (gt whois.subRecords.length 0)}}
+        <h1 class="p-title">
+          {{fa-icon icon="record-vinyl" class="icon" fixedWidth=true}}
+          Sub Records
+        </h1>
+        {{#each subRecordsMostRecentFirst as | record |}}
+          <div class="grouped-item-container">
+            {{#if record.registrant.organization}}
+              <div>
+                <span class="p-key">Registrant: </span>
+                <span class="p-value">{{record.registrant.organization}}</span>
+              </div>
+            {{/if}}
+            {{#if record.createdDate}}
+              <div>
+                <span class="p-key">Created Date: </span>
+                <span class="p-value">
+                  {{moment-format
+                          record.createdDate
+                          "MM/DD/YYYY HH:mm:ss"
+                          timeZone=timezone
+                  }}
+                </span>
+              </div>
+            {{/if}}
+            {{#if record.registrant.country}}
+              <div>
+                <span class="p-key">Country: </span>
+                <span class="p-value">{{record.registrant.country}}</span>
+              </div>
+            {{/if}}
+            {{#if record.administrativeContact}}
+              <div class="mt-1">
+                {{#if record.administrativeContact.organization}}
+                  <div>
+                    <span class="p-key">Admin Org: </span>
+                    <span class="p-value">{{record.administrativeContact.organization}}</span>
+                  </div>
+                {{/if}}
+                {{#if record.administrativeContact.email}}
+                  <div>
+                    <span class="p-key">Admin Email: </span>
+                    <span class="p-value">{{record.administrativeContact.email}}</span>
+                  </div>
+                {{/if}}
+              </div>
+            {{/if}}
+            {{#if record.technicalContact}}
+              <div class="mt-1">
+                {{#if record.technicalContact.organization}}
+                  <div>
+                    <span class="p-key">Tech Org: </span>
+                    <span class="p-value">{{record.technicalContact.organization}}</span>
+                  </div>
+                {{/if}}
+                {{#if record.technicalContact.email}}
+                  <div>
+                    <span class="p-key">Tech Email: </span>
+                    <span class="p-value">{{record.technicalContact.email}}</span>
+                  </div>
+                {{/if}}
+              </div>
+            {{/if}}
+          </div>
+        {{/each}}
       {{/if}}
-      {{#if whois.audit.updatedDate}}
-        <div>
-          <span class="p-key">Audit Updated Date: </span>
-          <span class="p-value">{{whois.audit.updatedDate}}</span>
-        </div>
-      {{/if}}
-
-      <br />
-
-      {{#each whois.customFields as |customField|}}
-        <div>
-          <span class="p-key">{{titleize (humanize (dasherize customField.name))}}:
-          </span>
-          <span class="p-value">{{customField.value}}</span>
-        </div>
-      {{/each}}
-
       {{#if whois.ips.length}}
         <h1 class="p-title">
           {{fa-icon icon="map-pin" class="icon" fixedWidth=true}}
@@ -568,7 +634,7 @@
 {{/if}}
 
 {{#if (eq block._state.activeTab "reverseWhois")}}
-  <div class="reverse-whois">
+  <div class="reverse-whois mt-2">
     {{#each displayReverseWhois as |reverseWhois reverseWhoisIndex|}}
       <div class="reverse-whois-item">
         <button
@@ -582,7 +648,7 @@
           </div>
         </button>
         {{#if (get showCopySuccessCheck reverseWhoisIndex)}}
-          {{fa-icon icon="check" class="icon" fixedWidth=true}}
+          {{fa-icon icon="check" class="icon" fixedWidth=true}} <span class="p-footnote">Copied to clipboard</span>
         {{/if}}
       </div>
     {{/each}}
@@ -602,7 +668,7 @@
 
 {{! Expand On Message Tabs }}
 {{#if (eq block._state.activeTab "dns")}}
-  <div class="dns">
+  <div class="dns mt-2">
     {{#if getDnsIsRunning}}
       {{fa-icon icon="spinner-third" size="lg" fixedWidth=true spin=true}}
     {{else if gettingDnsErrorMessage}}
@@ -683,7 +749,7 @@
 {{/if}}
 
 {{#if (eq block._state.activeTab "dnsWhoisHistory")}}
-  <div class="dns-whois-history">
+  <div class="dns-whois-history mt-2">
     {{#if getDnsWhoisHistoryIsRunning}}
       {{fa-icon icon="spinner-third" size="lg" fixedWidth=true spin=true}}
     {{else if gettingDnsWhoisHistoryErrorMessage}}
@@ -1556,7 +1622,7 @@
 {{/if}}
 
 {{#if (eq block._state.activeTab "domainAvailability")}}
-  <div class="domain-availability">
+  <div class="domain-availability mt-2">
     {{#if getDomainAvailabilityIsRunning}}
       {{fa-icon icon="spinner-third" size="lg" fixedWidth=true spin=true}}
     {{else if gettingDomainAvailabilityErrorMessage}}
@@ -1587,7 +1653,7 @@
 {{/if}}
 
 {{#if (eq block._state.activeTab "domainSubDomain")}}
-  <div class="domain-subdomain">
+  <div class="domain-subdomain mt-2">
     {{#if getDomainSubDomainIsRunning}}
       {{fa-icon icon="spinner-third" size="lg" fixedWidth=true spin=true}}
     {{else if gettingDomainSubDomainErrorMessage}}
@@ -1633,7 +1699,7 @@
 {{/if}}
 
 {{#if (eq block._state.activeTab "reverseNs")}}
-  <div class="reverse-ns">
+  <div class="reverse-ns mt-2">
     {{#if getReverseNsIsRunning}}
       {{fa-icon icon="spinner-third" size="lg" fixedWidth=true spin=true}}
     {{else if gettingReverseNsErrorMessage}}
@@ -1650,10 +1716,7 @@
           <span class="no-results">No Results Found</span>
         {{else}}
           {{#each displayReverseNs as |_reverseNs _reverseNsIndex|}}
-            {{#if (gt _reverseNsIndex 0)}}
-              <br />
-            {{/if}}
-            <div class="reverse-ns-value">
+            <div class="grouped-item-container">
               {{#if _reverseNs.name}}
                 <div>
                   <span class="p-key">Name: </span>

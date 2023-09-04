@@ -26,6 +26,30 @@ polarity.export = PolarityComponent.extend({
     const details = this.get('details');
     return this.get('tabRenderOrder').find((tab) => details[tab] && details[tab].length);
   },
+  whoisHasDates: Ember.computed('details.whois', function () {
+    const whois = this.get('details.whois');
+    return (
+      whois &&
+      (whois.createdDateNormalize ||
+        whois.createdDate ||
+        whois.updatedDateNormalized ||
+        whois.updatedDate ||
+        whois.expiresDateNormalized ||
+        whois.expiresDate ||
+        whois.audit.updatedDate ||
+        whois.audit.createdDate)
+    );
+  }),
+  // subrecords are returned in chronological order (oldest first) and we want most recent first
+  subRecordsMostRecentFirst: Ember.computed('details.whois.subRecords.[]', function () {
+    const subRecords = this.get('details.whois.subRecords');
+    if (Array.isArray(subRecords)) {
+      // return reversed copy of subRecords
+      return [ ... subRecords].reverse();
+    } else {
+      return [];
+    }
+  }),
   init() {
     if (!this.get('block._state')) {
       this.set('block._state', {});
@@ -113,7 +137,6 @@ polarity.export = PolarityComponent.extend({
         });
     }
   },
-
   dnsFailureMessage: '',
   gettingDnsErrorMessage: '',
   getDnsIsRunning: false,
