@@ -127,6 +127,12 @@
           <span class="p-value">{{whois.registrarName}}</span>
         </div>
       {{/if}}
+      {{#if whois.registryData.registrant.organization}}
+        <div>
+          <span class="p-key">Registrant: </span>
+          <span class="p-value">{{whois.registryData.registrant.organization}}</span>
+        </div>
+      {{/if}}
       {{#if whois.registrarIANAID}}
         <div>
           <span class="p-key">Registrar IANA ID: </span>
@@ -209,6 +215,18 @@
                     timeZone=timezone
                   }}{{/if}}
               </span>
+            </div>
+          {{/if}}
+          {{#if whois.registryData.createdDate}}
+            <div>
+              <span class="p-key">Registry Created Date: </span>
+              <span class="p-value">{{whois.registryData.createdDate}}</span>
+            </div>
+          {{/if}}
+          {{#if whois.registryData.updatedDate}}
+            <div>
+              <span class="p-key">Registry Updated Date: </span>
+              <span class="p-value">{{whois.registryData.updatedDate}}</span>
             </div>
           {{/if}}
           {{#if whois.audit.createdDate}}

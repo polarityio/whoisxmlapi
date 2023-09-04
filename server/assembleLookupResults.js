@@ -59,16 +59,35 @@ const createSummaryTags = ({ whois, reverseWhois }, entity, options) => {
  */
 const getWhoisIpSummaryTags = (whois) => {
   let tags = [];
-  const subRecords = getOr([], 'subRecords', whois);
-  const record = [...subRecords].reverse().find((record) => {
-    return getOr(null, 'registrant.organization', record);
-  });
 
-  if (record && record.registrant && record.registrant.organization) {
-    tags.push(record.registrant.organization);
+  // Registrant information is not always located in the same place
+  const registrant = getFirstValidPathValue(
+    null,
+    ['registrant.organization', 'registryData.registrant.organization'],
+    whois
+  );
+  let createdDate;
+
+  if (registrant) {
+    tags.push(registrant);
+    createdDate = getFirstValidPathValue(
+      null,
+      ['createdDate', 'registryData.createdDate'],
+      whois
+    );
+  } else {
+    const subRecords = getOr([], 'subRecords', whois);
+    const record = [...subRecords].reverse().find((record) => {
+      return getOr(null, 'registrant.organization', record);
+    });
+
+    if (record && record.registrant && record.registrant.organization) {
+      tags.push(record.registrant.organization);
+    }
+
+    createdDate = getOr(null, 'createdDate', record);
   }
 
-  const createdDate = getOr(null, 'createdDate', record);
   if (createdDate) {
     const date = DateTime.fromISO(createdDate);
     const humanReadableCreated = date.toLocaleString(DateTime.DATE_SHORT);

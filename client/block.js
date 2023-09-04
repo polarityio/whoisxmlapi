@@ -37,7 +37,9 @@ polarity.export = PolarityComponent.extend({
         whois.expiresDateNormalized ||
         whois.expiresDate ||
         whois.audit.updatedDate ||
-        whois.audit.createdDate)
+        whois.audit.createdDate ||
+        whois.registryData.createdDate ||
+        whois.registryData.updatedDate)
     );
   }),
   // subrecords are returned in chronological order (oldest first) and we want most recent first
@@ -45,7 +47,7 @@ polarity.export = PolarityComponent.extend({
     const subRecords = this.get('details.whois.subRecords');
     if (Array.isArray(subRecords)) {
       // return reversed copy of subRecords
-      return [ ... subRecords].reverse();
+      return [...subRecords].reverse();
     } else {
       return [];
     }
