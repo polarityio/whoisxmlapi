@@ -35,7 +35,7 @@ module.exports = {
     {
       key: 'apiKey',
       name: 'API Key',
-      description: 'A Company API Key associated with your WhoisXMLAPI Instance',
+      description: 'A valid WhoisXMLAPI API key',
       default: '',
       type: 'password',
       userCanEdit: false,

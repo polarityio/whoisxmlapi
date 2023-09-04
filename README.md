@@ -5,19 +5,21 @@ WhoisXMLAPI has unique collection of cyber threat intelligence feeds have proven
 The WhoisXMLAPI Polarity Integration allows you to search WHOIS, Reverse WHOIS, DNS, WHOIS DNS History, Domain Purchase Availability, & Reverse NS, via Domains and by Annotations.
 
 
-<div style="display:flex; align-items: flex-start; justify-content:flex-start; align-items:flex-start;">
-  <img width="350" alt="Integration Example Domain" src="./images/domain-result.png">
-  <img width="350" alt="Integration Example Annotation" src="./images/string-result.png">
-</div>
+| ![](images/integration-example-ip.png) | ![](/images/integration-example-domain.png) | ![](assets/integration-example-email.png) 
+|----------------------------------------|---------------------------------------------|-------------------------------------------|
+| *IP WHOIS Example*                     | *Domain WHOIS Example*                | *Email Reverse WHOIS Example*             |
 
 To learn more about WhoisXMLAPI, visit the [official website](https://main.whoisxmlapi.com/).
 
 ## WhoisXMLAPI Integration Options
 
 ### API Key
-A Company API Key associated with your WhoisXMLAPI Instance
 
+A valid WhoisXMLAPI API key
 
+### Enable Reverse WHOIS Lookups
+
+If checked, the integration will perform Reverse WHOIS lookups on emails, annotated entities, and "all text" if those Data Types are enabled. Configure which Data Types are enabled for Reverse WHOIS searches via the Data Types page.
 
 ## Installation Instructions
 
