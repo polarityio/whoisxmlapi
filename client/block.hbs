@@ -112,6 +112,12 @@
         </h1>
       {{/if}}
 
+      {{#if whois.dataError}}
+        <div class="data-error-container my-1">
+          <span>{{fa-icon icon="exclamation-circle" class="icon" fixedWidth=true}} {{whois.dataError}}</span>
+        </div>
+      {{/if}}
+
       {{#if whois.status}}
         <div>
           <span class="p-key">Status: </span>

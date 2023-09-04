@@ -50,14 +50,10 @@ const createSummaryTags = ({ whois, reverseWhois }, options) => {
     ['createdDate', 'registryData.createdDate'],
     whois
   );
-  const dataError = getOr(null, 'dataError', whois);
+
   const reverseWhoisCount = size(reverseWhois);
 
   tags.push(registrant);
-
-  if (dataError) {
-    tags.push(dataError);
-  }
 
   if (createdDate) {
     const date = DateTime.fromISO(createdDate);
