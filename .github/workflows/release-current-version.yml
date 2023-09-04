@@ -2,7 +2,7 @@ name: Release Current Version
 
 on:
   push:
-    branches: [ foo ]
+    branches: [ master ]
 
 jobs:
   Run:

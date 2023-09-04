@@ -1,5 +1,7 @@
-const getCompanies = require('./getCompanies');
+const getWhois = require('./getWhois');
+const getReverseWhois = require('./getReverseWhois');
 
 module.exports = {
-  getCompanies
+  getWhois,
+  getReverseWhois
 };
