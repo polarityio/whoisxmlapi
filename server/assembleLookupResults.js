@@ -1,4 +1,4 @@
-const { flow, get, size, find, eq, map, some, getOr } = require('lodash/fp');
+const { flow, last, get, size, find, eq, map, some, getOr } = require('lodash/fp');
 const { DateTime } = require('luxon');
 const { getLogger } = require('./logging');
 
@@ -17,7 +17,7 @@ const assembleLookupResults = (entities, whois, reverseWhois, options) =>
       entity,
       data: resultsFound
         ? {
-            summary: createSummaryTags(resultsForThisEntity, options),
+            summary: createSummaryTags(resultsForThisEntity, entity, options),
             details: resultsForThisEntity
           }
         : null
@@ -36,12 +36,64 @@ const getResultsForThisEntity = (entity, whois, reverseWhois) => {
   };
 };
 
-const createSummaryTags = ({ whois, reverseWhois }, options) => {
+const createSummaryTags = ({ whois, reverseWhois }, entity, options) => {
+  // Results for an entity will either be WHOIS results of ReverseWHOIS results
+  if (whois && entity.isDomain) {
+    return getWhoisDomainSummaryTags(whois);
+  } else if (whois && entity.isIP) {
+    return getWhoisIpSummaryTags(whois);
+  } else if (reverseWhois) {
+    return getReverseWhoisSummaryTags(reverseWhois);
+  } else {
+    return ['Record Found'];
+  }
+};
+
+/**
+ * IP WHOIS lookups don't contain registrant information but instead contian one or
+ * more subrecords.  For the summary tags, we find the most recent subrecord that
+ * has organization information and return that.
+ *
+ * @param whois
+ * @returns {*[]}
+ */
+const getWhoisIpSummaryTags = (whois) => {
+  let tags = [];
+  const subRecords = getOr([], 'subRecords', whois);
+  const record = [...subRecords].reverse().find((record) => {
+    return getOr(null, 'registrant.organization', record);
+  });
+
+  if (record && record.registrant && record.registrant.organization) {
+    tags.push(record.registrant.organization);
+  }
+
+  const createdDate = getOr(null, 'createdDate', record);
+  if (createdDate) {
+    const date = DateTime.fromISO(createdDate);
+    const humanReadableCreated = date.toLocaleString(DateTime.DATE_SHORT);
+
+    tags.push(`Created: ${humanReadableCreated}`);
+  }
+
+  if (tags.length === 0) {
+    tags.push('WHOIS Record Found');
+  }
+
+  return tags;
+};
+
+/**
+ * For domain lookups return registrant information along with the created date
+ * @param whois
+ * @returns {*[]}
+ */
+const getWhoisDomainSummaryTags = (whois) => {
   let tags = [];
 
   // Registrant information is not always located in the same place
   const registrant = getFirstValidPathValue(
-    'No registrant',
+    null,
     ['registrant.organization', 'registryData.registrant.organization'],
     whois
   );
@@ -51,9 +103,9 @@ const createSummaryTags = ({ whois, reverseWhois }, options) => {
     whois
   );
 
-  const reverseWhoisCount = size(reverseWhois);
-
-  tags.push(registrant);
+  if (registrant) {
+    tags.push(registrant);
+  }
 
   if (createdDate) {
     const date = DateTime.fromISO(createdDate);
@@ -62,10 +114,19 @@ const createSummaryTags = ({ whois, reverseWhois }, options) => {
     tags.push(`Created: ${humanReadableCreated}`);
   }
 
-  if (reverseWhoisCount) {
-    tags.push(`Reverse WHOIS: (${reverseWhoisCount})`);
+  if (tags.length === 0) {
+    tags.push('WHOIS Record Found');
   }
 
+  return tags;
+};
+
+const getReverseWhoisSummaryTags = (reverseWhois) => {
+  let tags = [];
+  const reverseWhoisCount = size(reverseWhois);
+  if (reverseWhoisCount) {
+    tags.push(`Reverse WHOIS: ${reverseWhoisCount}`);
+  }
   return tags;
 };
 
