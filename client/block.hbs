@@ -9,18 +9,16 @@
 </div>
 
 <ul class="nav nav-tabs">
-  {{#if (eq block.entity.type "string")}}
-    {{#if (get details "reverseWhois" "length")}}
-      <li class="nav-item">
-        <a
-          {{action "changeTab" "reverseWhois"}}
-          class="nav-link {{if (eq block._state.activeTab 'reverseWhois') 'active'}}"
-          href="#"
-        >
-          {{get displayTabNames "reverseWhois"}}
-        </a>
-      </li>
-    {{/if}}
+  {{#if (get details "reverseWhois" "length")}}
+    <li class="nav-item">
+      <a
+        {{action "changeTab" "reverseWhois"}}
+        class="nav-link {{if (eq block._state.activeTab 'reverseWhois') 'active'}}"
+        href="#"
+      >
+        Reverse WHOIS
+      </a>
+    </li>
   {{else}}
     {{#if (get details "whois" "length")}}
       <li class="nav-item">
@@ -29,82 +27,92 @@
           class="nav-link {{if (eq block._state.activeTab 'whois') 'active'}}"
           href="#"
         >
-          {{get displayTabNames "whois"}}
+          WHOIS
         </a>
       </li>
     {{/if}}
-    <li class="nav-item">
-      <a
-        {{action "changeTab" "dns"}}
-        class="nav-link {{if (eq block._state.activeTab 'dns') 'active'}}"
-        href="#"
-      >
-        {{get displayTabNames "dns"}}
-        {{#if getDnsIsRunning}}
-          {{fa-icon "spinner-third" size="md" fixedWidth=true spin=true}}
-        {{/if}}
-      </a>
-    </li>
-    <li class="nav-item">
-      <a
-        {{action "changeTab" "dnsWhoisHistory"}}
-        class="nav-link {{if (eq block._state.activeTab 'dnsWhoisHistory') 'active'}}"
-        href="#"
-      >
-        {{get displayTabNames "dnsWhoisHistory"}}
-        {{#if getDnsWhoisHistoryIsRunning}}
-          {{fa-icon "spinner-third" size="md" fixedWidth=true spin=true}}
-        {{/if}}
-      </a>
-    </li>
-    <li class="nav-item">
-      <a
-        {{action "changeTab" "domainAvailability"}}
-        class="nav-link {{if (eq block._state.activeTab 'domainAvailability') 'active'}}"
-        href="#"
-      >
-        {{get displayTabNames "domainAvailability"}}
-        {{#if getDomainAvailabilityIsRunning}}
-          {{fa-icon "spinner-third" size="md" fixedWidth=true spin=true}}
-        {{/if}}
-      </a>
-    </li>
-    <li class="nav-item">
-      <a
-        {{action "changeTab" "domainSubDomain"}}
-        class="nav-link {{if (eq block._state.activeTab 'domainSubDomain') 'active'}}"
-        href="#"
-      >
-        {{get displayTabNames "domainSubDomain"}}
-        {{#if getDomainSubDomainIsRunning}}
-          {{fa-icon "spinner-third" size="md" fixedWidth=true spin=true}}
-        {{/if}}
-      </a>
-    </li>
+    {{#if block.entity.isDomain}}
+      <li class="nav-item">
+        <a
+          {{action "changeTab" "dns"}}
+          class="nav-link {{if (eq block._state.activeTab 'dns') 'active'}}"
+          href="#"
+        >
+          DNS Lookup
+          {{#if getDnsIsRunning}}
+            {{fa-icon icon="spinner-third" size="md" fixedWidth=true spin=true}}
+          {{/if}}
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a
+          {{action "changeTab" "dnsWhoisHistory"}}
+          class="nav-link {{if (eq block._state.activeTab 'dnsWhoisHistory') 'active'}}"
+          href="#"
+        >
+          WHOIS History
+          {{#if getDnsWhoisHistoryIsRunning}}
+            {{fa-icon icon="spinner-third" size="md" fixedWidth=true spin=true}}
+          {{/if}}
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a
+          {{action "changeTab" "domainAvailability"}}
+          class="nav-link {{if (eq block._state.activeTab 'domainAvailability') 'active'}}"
+          href="#"
+        >
+          Domain Availability
+          {{#if getDomainAvailabilityIsRunning}}
+            {{fa-icon icon="spinner-third" size="md" fixedWidth=true spin=true}}
+          {{/if}}
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a
+          {{action "changeTab" "domainSubDomain"}}
+          class="nav-link {{if (eq block._state.activeTab 'domainSubDomain') 'active'}}"
+          href="#"
+        >
+          Subdomain Discovery
+          {{#if getDomainSubDomainIsRunning}}
+            {{fa-icon icon="spinner-third" size="md" fixedWidth=true spin=true}}
+          {{/if}}
+        </a>
+      </li>
+    {{/if}}
     <li class="nav-item">
       <a
         {{action "changeTab" "reverseNs"}}
         class="nav-link {{if (eq block._state.activeTab 'reverseNs') 'active'}}"
         href="#"
       >
-        {{get displayTabNames "reverseNs"}}
+        Reverse NS
         {{#if getReverseNsIsRunning}}
-          {{fa-icon "spinner-third" size="md" fixedWidth=true spin=true}}
+          {{fa-icon icon="spinner-third" size="md" fixedWidth=true spin=true}}
         {{/if}}
       </a>
     </li>
   {{/if}}
 </ul>
-<br />
 
 {{#if (eq block._state.activeTab "whois")}}
   {{#with details.whois as |whois|}}
-    <div class="whois">
+    <div class="whois mt-2">
       {{#if whois.domainName}}
-        <h1 class="p-title">
+        <h1 class="p-title mt-0">
           {{fa-icon icon="location-arrow" class="icon" fixedWidth=true}}
           {{whois.domainName}}
         </h1>
+      {{/if}}
+
+      {{#if whois.dataError}}
+        <div class="data-error-container my-1">
+          <span>{{fa-icon icon="exclamation-circle" class="icon" fixedWidth=true}} {{whois.dataError}}</span>
+        </div>
       {{/if}}
 
       {{#if whois.status}}
@@ -117,6 +125,12 @@
         <div>
           <span class="p-key">Registrar Name: </span>
           <span class="p-value">{{whois.registrarName}}</span>
+        </div>
+      {{/if}}
+      {{#if whois.registryData.registrant.organization}}
+        <div>
+          <span class="p-key">Registrant: </span>
+          <span class="p-value">{{whois.registryData.registrant.organization}}</span>
         </div>
       {{/if}}
       {{#if whois.registrarIANAID}}
@@ -162,71 +176,152 @@
         </div>
       {{/if}}
 
-      <br />
-
-      {{#if (or whois.createdDateNormalized whois.createdDate)}}
-        <div>
-          <span class="p-key">Created Date: </span>
-          <span class="p-value">{{#if
-              whois.createdDateNormalized
-            }}{{whois.createdDateNormalized}}{{else}}{{moment-format
-                whois.createdDate
-                "MM/DD/YYYY HH:mm:ss"
-                timeZone=timezone
-              }}{{/if}}
-          </span>
+      {{#if whoisHasDates}}
+        <div class="mt-2">
+          {{#if (or whois.createdDateNormalized whois.createdDate)}}
+            <div>
+              <span class="p-key">Created Date: </span>
+              <span class="p-value">{{#if
+                  whois.createdDateNormalized
+                }}{{whois.createdDateNormalized}}{{else}}{{moment-format
+                    whois.createdDate
+                    "MM/DD/YYYY HH:mm:ss"
+                    timeZone=timezone
+                  }}{{/if}}
+              </span>
+            </div>
+          {{/if}}
+          {{#if (or whois.updatedDateNormalized whois.updatedDate)}}
+            <div>
+              <span class="p-key">Updated Date: </span>
+              <span class="p-value">{{#if
+                  whois.updatedDateNormalized
+                }}{{whois.updatedDateNormalized}}{{else}}{{moment-format
+                    whois.updatedDate
+                    "MM/DD/YYYY HH:mm:ss"
+                    timeZone=timezone
+                  }}{{/if}}
+              </span>
+            </div>
+          {{/if}}
+          {{#if (or whois.expiresDateNormalized whois.expiresDate)}}
+            <div>
+              <span class="p-key">Expires Date: </span>
+              <span class="p-value">{{#if
+                  whois.expiresDateNormalized
+                }}{{whois.expiresDateNormalized}}{{else}}{{moment-format
+                    whois.expiresDate
+                    "MM/DD/YYYY HH:mm:ss"
+                    timeZone=timezone
+                  }}{{/if}}
+              </span>
+            </div>
+          {{/if}}
+          {{#if whois.registryData.createdDate}}
+            <div>
+              <span class="p-key">Registry Created Date: </span>
+              <span class="p-value">{{whois.registryData.createdDate}}</span>
+            </div>
+          {{/if}}
+          {{#if whois.registryData.updatedDate}}
+            <div>
+              <span class="p-key">Registry Updated Date: </span>
+              <span class="p-value">{{whois.registryData.updatedDate}}</span>
+            </div>
+          {{/if}}
+          {{#if whois.audit.createdDate}}
+            <div>
+              <span class="p-key">Audit Created Date: </span>
+              <span class="p-value">{{whois.audit.createdDate}}</span>
+            </div>
+          {{/if}}
+          {{#if whois.audit.updatedDate}}
+            <div>
+              <span class="p-key">Audit Updated Date: </span>
+              <span class="p-value">{{whois.audit.updatedDate}}</span>
+            </div>
+          {{/if}}
         </div>
       {{/if}}
-      {{#if (or whois.updatedDateNormalized whois.updatedDate)}}
-        <div>
-          <span class="p-key">Updated Date: </span>
-          <span class="p-value">{{#if
-              whois.updatedDateNormalized
-            }}{{whois.updatedDateNormalized}}{{else}}{{moment-format
-                whois.updatedDate
-                "MM/DD/YYYY HH:mm:ss"
-                timeZone=timezone
-              }}{{/if}}
-          </span>
-        </div>
-      {{/if}}
-      {{#if (or whois.expiresDateNormalized whois.expiresDate)}}
-        <div>
-          <span class="p-key">Expires Date: </span>
-          <span class="p-value">{{#if
-              whois.expiresDateNormalized
-            }}{{whois.expiresDateNormalized}}{{else}}{{moment-format
-                whois.expiresDate
-                "MM/DD/YYYY HH:mm:ss"
-                timeZone=timezone
-              }}{{/if}}
-          </span>
+
+      {{#if (gt whois.customFields.length 0)}}
+        <div class="mt-2">
+          {{#each whois.customFields as |customField|}}
+            <div>
+              <span class="p-key">{{titleize (humanize (dasherize customField.name))}}:
+              </span>
+              <span class="p-value">{{customField.value}}</span>
+            </div>
+          {{/each}}
         </div>
       {{/if}}
 
-      {{#if whois.audit.createdDate}}
-        <div>
-          <span class="p-key">Audit Created Date: </span>
-          <span class="p-value">{{whois.audit.createdDate}}</span>
-        </div>
+      {{#if (gt whois.subRecords.length 0)}}
+        <h1 class="p-title">
+          {{fa-icon icon="record-vinyl" class="icon" fixedWidth=true}}
+          Sub Records
+        </h1>
+        {{#each subRecordsMostRecentFirst as | record |}}
+          <div class="grouped-item-container">
+            {{#if record.registrant.organization}}
+              <div>
+                <span class="p-key">Registrant: </span>
+                <span class="p-value">{{record.registrant.organization}}</span>
+              </div>
+            {{/if}}
+            {{#if record.createdDate}}
+              <div>
+                <span class="p-key">Created Date: </span>
+                <span class="p-value">
+                  {{moment-format
+                          record.createdDate
+                          "MM/DD/YYYY HH:mm:ss"
+                          timeZone=timezone
+                  }}
+                </span>
+              </div>
+            {{/if}}
+            {{#if record.registrant.country}}
+              <div>
+                <span class="p-key">Country: </span>
+                <span class="p-value">{{record.registrant.country}}</span>
+              </div>
+            {{/if}}
+            {{#if record.administrativeContact}}
+              <div class="mt-1">
+                {{#if record.administrativeContact.organization}}
+                  <div>
+                    <span class="p-key">Admin Org: </span>
+                    <span class="p-value">{{record.administrativeContact.organization}}</span>
+                  </div>
+                {{/if}}
+                {{#if record.administrativeContact.email}}
+                  <div>
+                    <span class="p-key">Admin Email: </span>
+                    <span class="p-value">{{record.administrativeContact.email}}</span>
+                  </div>
+                {{/if}}
+              </div>
+            {{/if}}
+            {{#if record.technicalContact}}
+              <div class="mt-1">
+                {{#if record.technicalContact.organization}}
+                  <div>
+                    <span class="p-key">Tech Org: </span>
+                    <span class="p-value">{{record.technicalContact.organization}}</span>
+                  </div>
+                {{/if}}
+                {{#if record.technicalContact.email}}
+                  <div>
+                    <span class="p-key">Tech Email: </span>
+                    <span class="p-value">{{record.technicalContact.email}}</span>
+                  </div>
+                {{/if}}
+              </div>
+            {{/if}}
+          </div>
+        {{/each}}
       {{/if}}
-      {{#if whois.audit.updatedDate}}
-        <div>
-          <span class="p-key">Audit Updated Date: </span>
-          <span class="p-value">{{whois.audit.updatedDate}}</span>
-        </div>
-      {{/if}}
-
-      <br />
-
-      {{#each whois.customFields as |customField|}}
-        <div>
-          <span class="p-key">{{titleize (humanize (dasherize customField.name))}}:
-          </span>
-          <span class="p-value">{{customField.value}}</span>
-        </div>
-      {{/each}}
-
       {{#if whois.ips.length}}
         <h1 class="p-title">
           {{fa-icon icon="map-pin" class="icon" fixedWidth=true}}
@@ -276,7 +371,7 @@
                 fixedWidth=true
               }}
               Registrant</span>
-            {{fa-icon "angle-up"}}
+            {{fa-icon icon="angle-up"}}
           </a>
           <div>
             {{#if whois.registrant.name}}
@@ -352,7 +447,7 @@
                 fixedWidth=true
               }}
               Registrant</span>
-            {{fa-icon "angle-down"}}
+            {{fa-icon icon="angle-down"}}
           </a>
         {{/if}}
       {{/if}}
@@ -375,7 +470,7 @@
                 fixedWidth=true
               }}
               Administrative Contact</span>
-            {{fa-icon "angle-up"}}
+            {{fa-icon icon="angle-up"}}
           </a>
           <div>
             {{#if whois.administrativeContact.name}}
@@ -454,7 +549,7 @@
                 fixedWidth=true
               }}
               Administrative Contact</span>
-            {{fa-icon "angle-down"}}
+            {{fa-icon icon="angle-down"}}
           </a>
         {{/if}}
       {{/if}}
@@ -472,7 +567,7 @@
                 fixedWidth=true
               }}
               Technical Contact</span>
-            {{fa-icon "angle-up"}}
+            {{fa-icon icon="angle-up"}}
           </a>
           <div>
             {{#if whois.technicalContact.name}}
@@ -548,7 +643,7 @@
                 fixedWidth=true
               }}
               Technical Contact</span>
-            {{fa-icon "angle-down"}}
+            {{fa-icon icon="angle-down"}}
           </a>
         {{/if}}
       {{/if}}
@@ -557,7 +652,7 @@
 {{/if}}
 
 {{#if (eq block._state.activeTab "reverseWhois")}}
-  <div class="reverse-whois">
+  <div class="reverse-whois mt-2">
     {{#each displayReverseWhois as |reverseWhois reverseWhoisIndex|}}
       <div class="reverse-whois-item">
         <button
@@ -571,7 +666,7 @@
           </div>
         </button>
         {{#if (get showCopySuccessCheck reverseWhoisIndex)}}
-          {{fa-icon icon="check" class="icon" fixedWidth=true}}
+          {{fa-icon icon="check" class="icon" fixedWidth=true}} <span class="p-footnote">Copied to clipboard</span>
         {{/if}}
       </div>
     {{/each}}
@@ -591,9 +686,9 @@
 
 {{! Expand On Message Tabs }}
 {{#if (eq block._state.activeTab "dns")}}
-  <div class="dns">
+  <div class="dns mt-2">
     {{#if getDnsIsRunning}}
-      {{fa-icon "spinner-third" size="lg" fixedWidth=true spin=true}}
+      {{fa-icon icon="spinner-third" size="lg" fixedWidth=true spin=true}}
     {{else if gettingDnsErrorMessage}}
       <div class="alert alert-danger mt-1">
         {{gettingDnsErrorMessage}}
@@ -635,7 +730,7 @@
             >
               <span class="text">{{fa-icon icon="signature" class="icon" fixedWidth=true}}
                 Records</span>
-              {{fa-icon "angle-up"}}
+              {{fa-icon icon="angle-up"}}
             </a>
             <div>
               {{#each dns.dnsRecords as |dnsRecord dnsRecordIndex|}}
@@ -661,7 +756,7 @@
             >
               <span class="text">{{fa-icon icon="signature" class="icon" fixedWidth=true}}
                 Records</span>
-              {{fa-icon "angle-down"}}
+              {{fa-icon icon="angle-down"}}
             </a>
           {{/if}}
 
@@ -672,9 +767,9 @@
 {{/if}}
 
 {{#if (eq block._state.activeTab "dnsWhoisHistory")}}
-  <div class="dns-whois-history">
+  <div class="dns-whois-history mt-2">
     {{#if getDnsWhoisHistoryIsRunning}}
-      {{fa-icon "spinner-third" size="lg" fixedWidth=true spin=true}}
+      {{fa-icon icon="spinner-third" size="lg" fixedWidth=true spin=true}}
     {{else if gettingDnsWhoisHistoryErrorMessage}}
       <div class="alert alert-danger mt-1">
         {{gettingDnsWhoisHistoryErrorMessage}}
@@ -692,854 +787,850 @@
             <br />
           {{/if}}
           <div class="dns-whois-history-content">
+            <a
+              href="#"
+              class="expandable-title"
+              {{on
+                "click"
+                (action "toggleExpandableTitle" "dnsWhoisHistory" _dnsWhoisHistoryIndex)
+              }}
+            >
+              <span class="text">{{fa-icon icon="history" class="icon" fixedWidth=true}}
+                {{_dnsWhoisHistory.domainName}}
+                {{#if
+                  (or (gt _dnsWhoisHistory.updatedDate.length 0)
+                      (gt _dnsWhoisHistory.updatedDateRaw.length 0)
+                      (gt _dnsWhoisHistory.updatedDateISO8601.length 0)
+                  )
+                }}
+                  ({{or
+                    _dnsWhoisHistory.updatedDate
+                    _dnsWhoisHistory.updatedDateRaw
+                    _dnsWhoisHistory.updatedDateISO8601
+                  }})
+                {{/if}}
+              </span>
+              {{#if
+                (get expandableTitleStates (concat "dnsWhoisHistory" _dnsWhoisHistoryIndex))
+              }}
+                {{fa-icon icon="angle-up"}}
+              {{else}}
+                {{fa-icon icon="angle-down"}}
+              {{/if}}
+            </a>
             {{#if
               (get expandableTitleStates (concat "dnsWhoisHistory" _dnsWhoisHistoryIndex))
             }}
-              <a
-                href="#"
-                class="expandable-title"
-                {{on
-                  "click"
-                  (action "toggleExpandableTitle" "dnsWhoisHistory" _dnsWhoisHistoryIndex)
-                }}
-              >
-                <span class="text">{{fa-icon icon="history" class="icon" fixedWidth=true}}
-                  {{_dnsWhoisHistory.domainName}}
-                  ({{or
-                    _dnsWhoisHistory.updatedDate
-                    _dnsWhoisHistory.updatedDateRaw
-                    _dnsWhoisHistory.updatedDateISO8601
-                  }})</span>
-                {{fa-icon "angle-up"}}
-              </a>
               <div class="dns-whois-history-content">
-                {{#if _dnsWhoisHistory.type}}
-                  <div>
-                    <span class="p-key">Domain Type: </span>
-                    <span class="p-value">{{_dnsWhoisHistory.type}}</span>
-                  </div>
-                {{/if}}
-                {{#if _dnsWhoisHistory.status}}
-                  <div>
-                    <span class="p-key">Status: </span>
-                    <span class="p-value">{{join ", " _dnsWhoisHistory.status}}</span>
-                  </div>
-                {{/if}}
-                {{#if _dnsWhoisHistory.whoisServer}}
-                  <div>
-                    <span class="p-key">WHOIS Server: </span>
-                    <span class="p-value">{{_dnsWhoisHistory.whoisServer}}</span>
-                  </div>
-                {{/if}}
-                {{#if _dnsWhoisHistory.registrarName}}
-                  <div>
-                    <span class="p-key">Registrar Name: </span>
-                    <span class="p-value">{{_dnsWhoisHistory.registrarName}}</span>
-                  </div>
-                {{/if}}
-                {{#if
-                  (or _dnsWhoisHistory.createdDateRaw _dnsWhoisHistory.createdDateISO8601)
-                }}
-                  <div>
-                    <span class="p-key">Created Date: </span>
-                    <span class="p-value">{{#if
-                        _dnsWhoisHistory.createdDateRaw
-                      }}{{_dnsWhoisHistory.createdDateRaw}}{{else}}{{moment-format
-                          _dnsWhoisHistory.createdDateISO8601
-                          "MM/DD/YYYY HH:mm:ss"
-                          timeZone=timezone
-                        }}{{/if}}
-                    </span>
-                  </div>
-                {{/if}}
-                {{#if
-                  (or _dnsWhoisHistory.updatedDateRaw _dnsWhoisHistory.updatedDateISO8601)
-                }}
-                  <div>
-                    <span class="p-key">Updated Date: </span>
-                    <span class="p-value">{{#if
-                        _dnsWhoisHistory.updatedDateRaw
-                      }}{{_dnsWhoisHistory.updatedDateRaw}}{{else}}{{moment-format
-                          _dnsWhoisHistory.updatedDateISO8601
-                          "MM/DD/YYYY HH:mm:ss"
-                          timeZone=timezone
-                        }}{{/if}}
-                    </span>
-                  </div>
-                {{/if}}
-                {{#if
-                  (or _dnsWhoisHistory.expiresDateRaw _dnsWhoisHistory.expiresDateISO8601)
-                }}
-                  <div>
-                    <span class="p-key">Expires Date: </span>
-                    <span class="p-value">{{#if
-                        _dnsWhoisHistory.expiresDateRaw
-                      }}{{_dnsWhoisHistory.expiresDateRaw}}{{else}}{{moment-format
-                          _dnsWhoisHistory.expiresDateISO8601
-                          "MM/DD/YYYY HH:mm:ss"
-                          timeZone=timezone
-                        }}{{/if}}
-                    </span>
-                  </div>
-                {{/if}}
+              {{#if _dnsWhoisHistory.type}}
+                <div>
+                  <span class="p-key">Domain Type: </span>
+                  <span class="p-value">{{_dnsWhoisHistory.type}}</span>
+                </div>
+              {{/if}}
+              {{#if _dnsWhoisHistory.status}}
+                <div>
+                  <span class="p-key">Status: </span>
+                  <span class="p-value">{{join ", " _dnsWhoisHistory.status}}</span>
+                </div>
+              {{/if}}
+              {{#if _dnsWhoisHistory.whoisServer}}
+                <div>
+                  <span class="p-key">WHOIS Server: </span>
+                  <span class="p-value">{{_dnsWhoisHistory.whoisServer}}</span>
+                </div>
+              {{/if}}
+              {{#if _dnsWhoisHistory.registrarName}}
+                <div>
+                  <span class="p-key">Registrar Name: </span>
+                  <span class="p-value">{{_dnsWhoisHistory.registrarName}}</span>
+                </div>
+              {{/if}}
+              {{#if
+                (or _dnsWhoisHistory.createdDateRaw _dnsWhoisHistory.createdDateISO8601)
+              }}
+                <div>
+                  <span class="p-key">Created Date: </span>
+                  <span class="p-value">{{#if
+                      _dnsWhoisHistory.createdDateRaw
+                    }}{{_dnsWhoisHistory.createdDateRaw}}{{else}}{{moment-format
+                        _dnsWhoisHistory.createdDateISO8601
+                        "MM/DD/YYYY HH:mm:ss"
+                        timeZone=timezone
+                      }}{{/if}}
+                  </span>
+                </div>
+              {{/if}}
+              {{#if
+                (or _dnsWhoisHistory.updatedDateRaw _dnsWhoisHistory.updatedDateISO8601)
+              }}
+                <div>
+                  <span class="p-key">Updated Date: </span>
+                  <span class="p-value">{{#if
+                      _dnsWhoisHistory.updatedDateRaw
+                    }}{{_dnsWhoisHistory.updatedDateRaw}}{{else}}{{moment-format
+                        _dnsWhoisHistory.updatedDateISO8601
+                        "MM/DD/YYYY HH:mm:ss"
+                        timeZone=timezone
+                      }}{{/if}}
+                  </span>
+                </div>
+              {{/if}}
+              {{#if
+                (or _dnsWhoisHistory.expiresDateRaw _dnsWhoisHistory.expiresDateISO8601)
+              }}
+                <div>
+                  <span class="p-key">Expires Date: </span>
+                  <span class="p-value">{{#if
+                      _dnsWhoisHistory.expiresDateRaw
+                    }}{{_dnsWhoisHistory.expiresDateRaw}}{{else}}{{moment-format
+                        _dnsWhoisHistory.expiresDateISO8601
+                        "MM/DD/YYYY HH:mm:ss"
+                        timeZone=timezone
+                      }}{{/if}}
+                  </span>
+                </div>
+              {{/if}}
 
-                {{#if _dnsWhoisHistory.audit.createdDate}}
-                  <div>
-                    <span class="p-key">Audit Created Date: </span>
-                    <span class="p-value">{{_dnsWhoisHistory.audit.createdDate}}</span>
-                  </div>
-                {{/if}}
-                {{#if _dnsWhoisHistory.audit.updatedDate}}
-                  <div>
-                    <span class="p-key">Audit Updated Date: </span>
-                    <span class="p-value">{{_dnsWhoisHistory.audit.updatedDate}}</span>
-                  </div>
-                {{/if}}
+              {{#if _dnsWhoisHistory.audit.createdDate}}
+                <div>
+                  <span class="p-key">Audit Created Date: </span>
+                  <span class="p-value">{{_dnsWhoisHistory.audit.createdDate}}</span>
+                </div>
+              {{/if}}
+              {{#if _dnsWhoisHistory.audit.updatedDate}}
+                <div>
+                  <span class="p-key">Audit Updated Date: </span>
+                  <span class="p-value">{{_dnsWhoisHistory.audit.updatedDate}}</span>
+                </div>
+              {{/if}}
 
-                {{#if _dnsWhoisHistory.ips.length}}
-                  <h1 class="p-title">
-                    {{fa-icon icon="map-pin" class="icon" fixedWidth=true}}
-                    WHOIS IP Addresses
-                  </h1>
-                  <div class="pills">
-                    {{#each _dnsWhoisHistory.ips as |ip|}}
-                      <span class="pill">{{ip}}</span>
-                    {{/each}}
-                  </div>
-                {{/if}}
+              {{#if _dnsWhoisHistory.ips.length}}
+                <h1 class="p-title">
+                  {{fa-icon icon="map-pin" class="icon" fixedWidth=true}}
+                  WHOIS IP Addresses
+                </h1>
+                <div class="pills">
+                  {{#each _dnsWhoisHistory.ips as |ip|}}
+                    <span class="pill">{{ip}}</span>
+                  {{/each}}
+                </div>
+              {{/if}}
 
-                {{#if _dnsWhoisHistory.nameServers.length}}
-                  <h1 class="p-title">
-                    {{fa-icon icon="map-pin" class="icon" fixedWidth=true}}
-                    Name Servers
-                  </h1>
-                  <div class="pills">
-                    {{#each _dnsWhoisHistory.nameServers as |nameServer|}}
-                      <span class="pill">{{nameServer}}</span>
-                    {{/each}}
-                  </div>
-                {{/if}}
+              {{#if _dnsWhoisHistory.nameServers.length}}
+                <h1 class="p-title">
+                  {{fa-icon icon="map-pin" class="icon" fixedWidth=true}}
+                  Name Servers
+                </h1>
+                <div class="pills">
+                  {{#each _dnsWhoisHistory.nameServers as |nameServer|}}
+                    <span class="pill">{{nameServer}}</span>
+                  {{/each}}
+                </div>
+              {{/if}}
 
+              {{#if
+                (or
+                  _dnsWhoisHistory.registrantContact.name
+                  _dnsWhoisHistory.registrantContact.organization
+                )
+              }}
                 {{#if
-                  (or
-                    _dnsWhoisHistory.registrantContact.name
-                    _dnsWhoisHistory.registrantContact.organization
+                  (get
+                    expandableTitleStates
+                    (concat "dnsWhoisHistory" "registrantContact" _dnsWhoisHistoryIndex)
                   )
                 }}
-                  {{#if
-                    (get
-                      expandableTitleStates
-                      (concat "dnsWhoisHistory" "registrantContact" _dnsWhoisHistoryIndex)
-                    )
-                  }}
-                    <a
-                      href="#"
-                      class="expandable-title"
-                      {{on
-                        "click"
-                        (action
-                          "toggleExpandableTitle"
-                          "dnsWhoisHistory"
-                          "registrantContact"
-                          _dnsWhoisHistoryIndex
-                        )
-                      }}
-                    >
-                      <span class="text">{{fa-icon
-                          icon="address-book"
-                          class="icon"
-                          fixedWidth=true
-                        }}
-                        Registrant</span>
-                      {{fa-icon "angle-up"}}
-                    </a>
-                    <div>
-                      {{#if _dnsWhoisHistory.registrantContact.name}}
-                        <div>
-                          <span class="p-key">Name: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.registrantContact.name}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if _dnsWhoisHistory.registrantContact.organization}}
-                        <div>
-                          <span class="p-key">Organization: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.registrantContact.organization}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if _dnsWhoisHistory.registrantContact.telephone}}
-                        <div>
-                          <span class="p-key">Telephone: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.registrantContact.telephone}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if _dnsWhoisHistory.registrantContact.fax}}
-                        <div>
-                          <span class="p-key">Fax: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.registrantContact.fax}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if _dnsWhoisHistory.registrantContact.street1}}
-                        <div>
-                          <span class="p-key">Street: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.registrantContact.street1}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if _dnsWhoisHistory.registrantContact.city}}
-                        <div>
-                          <span class="p-key">City: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.registrantContact.city}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if _dnsWhoisHistory.registrantContact.state}}
-                        <div>
-                          <span class="p-key">State: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.registrantContact.state}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if _dnsWhoisHistory.registrantContact.postalCode}}
-                        <div>
-                          <span class="p-key">Postal Code: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.registrantContact.postalCode}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if _dnsWhoisHistory.registrantContact.country}}
-                        <div>
-                          <span class="p-key">Country: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.registrantContact.country}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if _dnsWhoisHistory.registrantContact.countryCode}}
-                        <div>
-                          <span class="p-key">Country Code: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.registrantContact.countryCode}}</span>
-                        </div>
-                      {{/if}}
-                    </div>
-                  {{else}}
-                    <a
-                      href="#"
-                      class="expandable-title"
-                      {{on
-                        "click"
-                        (action
-                          "toggleExpandableTitle"
-                          "dnsWhoisHistory"
-                          "registrantContact"
-                          _dnsWhoisHistoryIndex
-                        )
-                      }}
-                    >
-                      <span class="text">{{fa-icon
-                          icon="address-book"
-                          class="icon"
-                          fixedWidth=true
-                        }}
-                        Registrant</span>
-                      {{fa-icon "angle-down"}}
-                    </a>
-                  {{/if}}
-                {{/if}}
-
-                {{#if
-                  (or
-                    _dnsWhoisHistory.administrativeContact.name
-                    _dnsWhoisHistory.administrativeContact.organization
-                  )
-                }}
-                  {{#if
-                    (get
-                      expandableTitleStates
-                      (concat
-                        "dnsWhoisHistory" "administrativeContact" _dnsWhoisHistoryIndex
+                  <a
+                    href="#"
+                    class="expandable-title"
+                    {{on
+                      "click"
+                      (action
+                        "toggleExpandableTitle"
+                        "dnsWhoisHistory"
+                        "registrantContact"
+                        _dnsWhoisHistoryIndex
                       )
-                    )
-                  }}
-                    <a
-                      href="#"
-                      class="expandable-title"
-                      {{on
-                        "click"
-                        (action
-                          "toggleExpandableTitle"
-                          "dnsWhoisHistory"
-                          "administrativeContact"
-                          _dnsWhoisHistoryIndex
-                        )
+                    }}
+                  >
+                    <span class="text">{{fa-icon
+                        icon="address-book"
+                        class="icon"
+                        fixedWidth=true
                       }}
-                    >
-                      <span class="text">{{fa-icon
-                          icon="address-book"
-                          class="icon"
-                          fixedWidth=true
-                        }}
-                        Administrative Contact</span>
-                      {{fa-icon "angle-up"}}
-                    </a>
-                    <div>
-                      {{#if _dnsWhoisHistory.administrativeContact.name}}
-                        <div>
-                          <span class="p-key">Name: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.administrativeContact.name}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if _dnsWhoisHistory.administrativeContact.organization}}
-                        <div>
-                          <span class="p-key">Organization: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.administrativeContact.organization}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if _dnsWhoisHistory.administrativeContact.telephone}}
-                        <div>
-                          <span class="p-key">Telephone: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.administrativeContact.telephone}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if _dnsWhoisHistory.administrativeContact.fax}}
-                        <div>
-                          <span class="p-key">Fax: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.administrativeContact.fax}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if _dnsWhoisHistory.administrativeContact.street1}}
-                        <div>
-                          <span class="p-key">Street: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.administrativeContact.street1}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if _dnsWhoisHistory.administrativeContact.city}}
-                        <div>
-                          <span class="p-key">City: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.administrativeContact.city}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if _dnsWhoisHistory.administrativeContact.state}}
-                        <div>
-                          <span class="p-key">State: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.administrativeContact.state}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if _dnsWhoisHistory.administrativeContact.postalCode}}
-                        <div>
-                          <span class="p-key">Postal Code: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.administrativeContact.postalCode}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if _dnsWhoisHistory.administrativeContact.country}}
-                        <div>
-                          <span class="p-key">Country: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.administrativeContact.country}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if _dnsWhoisHistory.administrativeContact.countryCode}}
-                        <div>
-                          <span class="p-key">Country Code: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.administrativeContact.countryCode}}</span>
-                        </div>
-                      {{/if}}
-                    </div>
-                  {{else}}
-                    <a
-                      href="#"
-                      class="expandable-title"
-                      {{on
-                        "click"
-                        (action
-                          "toggleExpandableTitle"
-                          "dnsWhoisHistory"
-                          "administrativeContact"
-                          _dnsWhoisHistoryIndex
-                        )
+                      Registrant</span>
+                    {{fa-icon icon="angle-up"}}
+                  </a>
+                  <div>
+                    {{#if _dnsWhoisHistory.registrantContact.name}}
+                      <div>
+                        <span class="p-key">Name: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.registrantContact.name}}</span>
+                      </div>
+                    {{/if}}
+                    {{#if _dnsWhoisHistory.registrantContact.organization}}
+                      <div>
+                        <span class="p-key">Organization: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.registrantContact.organization}}</span>
+                      </div>
+                    {{/if}}
+                    {{#if _dnsWhoisHistory.registrantContact.telephone}}
+                      <div>
+                        <span class="p-key">Telephone: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.registrantContact.telephone}}</span>
+                      </div>
+                    {{/if}}
+                    {{#if _dnsWhoisHistory.registrantContact.fax}}
+                      <div>
+                        <span class="p-key">Fax: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.registrantContact.fax}}</span>
+                      </div>
+                    {{/if}}
+                    {{#if _dnsWhoisHistory.registrantContact.street1}}
+                      <div>
+                        <span class="p-key">Street: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.registrantContact.street1}}</span>
+                      </div>
+                    {{/if}}
+                    {{#if _dnsWhoisHistory.registrantContact.city}}
+                      <div>
+                        <span class="p-key">City: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.registrantContact.city}}</span>
+                      </div>
+                    {{/if}}
+                    {{#if _dnsWhoisHistory.registrantContact.state}}
+                      <div>
+                        <span class="p-key">State: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.registrantContact.state}}</span>
+                      </div>
+                    {{/if}}
+                    {{#if _dnsWhoisHistory.registrantContact.postalCode}}
+                      <div>
+                        <span class="p-key">Postal Code: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.registrantContact.postalCode}}</span>
+                      </div>
+                    {{/if}}
+                    {{#if _dnsWhoisHistory.registrantContact.country}}
+                      <div>
+                        <span class="p-key">Country: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.registrantContact.country}}</span>
+                      </div>
+                    {{/if}}
+                    {{#if _dnsWhoisHistory.registrantContact.countryCode}}
+                      <div>
+                        <span class="p-key">Country Code: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.registrantContact.countryCode}}</span>
+                      </div>
+                    {{/if}}
+                  </div>
+                {{else}}
+                  <a
+                    href="#"
+                    class="expandable-title"
+                    {{on
+                      "click"
+                      (action
+                        "toggleExpandableTitle"
+                        "dnsWhoisHistory"
+                        "registrantContact"
+                        _dnsWhoisHistoryIndex
+                      )
+                    }}
+                  >
+                    <span class="text">{{fa-icon
+                        icon="address-book"
+                        class="icon"
+                        fixedWidth=true
                       }}
-                    >
-                      <span class="text">{{fa-icon
-                          icon="address-book"
-                          class="icon"
-                          fixedWidth=true
-                        }}
-                        Administrative Contact</span>
-                      {{fa-icon "angle-down"}}
-                    </a>
-                  {{/if}}
+                      Registrant</span>
+                    {{fa-icon icon="angle-down"}}
+                  </a>
                 {{/if}}
+              {{/if}}
 
+              {{#if
+                (or
+                  _dnsWhoisHistory.administrativeContact.name
+                  _dnsWhoisHistory.administrativeContact.organization
+                )
+              }}
                 {{#if
-                  (or
-                    _dnsWhoisHistory.technicalContact.name
-                    _dnsWhoisHistory.technicalContact.organization
+                  (get
+                    expandableTitleStates
+                    (concat
+                      "dnsWhoisHistory" "administrativeContact" _dnsWhoisHistoryIndex
+                    )
                   )
                 }}
-                  {{#if
-                    (get
-                      expandableTitleStates
-                      (concat "dnsWhoisHistory" "technicalContact" _dnsWhoisHistoryIndex)
-                    )
-                  }}
-                    <a
-                      href="#"
-                      class="expandable-title"
-                      {{on
-                        "click"
-                        (action
-                          "toggleExpandableTitle"
-                          "dnsWhoisHistory"
-                          "technicalContact"
-                          _dnsWhoisHistoryIndex
-                        )
+                  <a
+                    href="#"
+                    class="expandable-title"
+                    {{on
+                      "click"
+                      (action
+                        "toggleExpandableTitle"
+                        "dnsWhoisHistory"
+                        "administrativeContact"
+                        _dnsWhoisHistoryIndex
+                      )
+                    }}
+                  >
+                    <span class="text">{{fa-icon
+                        icon="address-book"
+                        class="icon"
+                        fixedWidth=true
                       }}
-                    >
-                      <span class="text">{{fa-icon
-                          icon="address-book"
-                          class="icon"
-                          fixedWidth=true
-                        }}
-                        Technical Contact</span>
-                      {{fa-icon "angle-up"}}
-                    </a>
-                    <div>
-                      {{#if _dnsWhoisHistory.technicalContact.name}}
-                        <div>
-                          <span class="p-key">Name: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.technicalContact.name}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if _dnsWhoisHistory.technicalContact.organization}}
-                        <div>
-                          <span class="p-key">Organization: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.technicalContact.organization}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if _dnsWhoisHistory.technicalContact.telephone}}
-                        <div>
-                          <span class="p-key">Telephone: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.technicalContact.telephone}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if _dnsWhoisHistory.technicalContact.fax}}
-                        <div>
-                          <span class="p-key">Fax: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.technicalContact.fax}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if _dnsWhoisHistory.technicalContact.street1}}
-                        <div>
-                          <span class="p-key">Street: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.technicalContact.street1}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if _dnsWhoisHistory.technicalContact.city}}
-                        <div>
-                          <span class="p-key">City: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.technicalContact.city}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if _dnsWhoisHistory.technicalContact.state}}
-                        <div>
-                          <span class="p-key">State: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.technicalContact.state}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if _dnsWhoisHistory.technicalContact.postalCode}}
-                        <div>
-                          <span class="p-key">Postal Code: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.technicalContact.postalCode}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if _dnsWhoisHistory.technicalContact.country}}
-                        <div>
-                          <span class="p-key">Country: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.technicalContact.country}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if _dnsWhoisHistory.technicalContact.countryCode}}
-                        <div>
-                          <span class="p-key">Country Code: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.technicalContact.countryCode}}</span>
-                        </div>
-                      {{/if}}
-                    </div>
-                  {{else}}
-                    <a
-                      href="#"
-                      class="expandable-title"
-                      {{on
-                        "click"
-                        (action
-                          "toggleExpandableTitle"
-                          "dnsWhoisHistory"
-                          "technicalContact"
-                          _dnsWhoisHistoryIndex
-                        )
+                      Administrative Contact</span>
+                    {{fa-icon icon="angle-up"}}
+                  </a>
+                  <div>
+                    {{#if _dnsWhoisHistory.administrativeContact.name}}
+                      <div>
+                        <span class="p-key">Name: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.administrativeContact.name}}</span>
+                      </div>
+                    {{/if}}
+                    {{#if _dnsWhoisHistory.administrativeContact.organization}}
+                      <div>
+                        <span class="p-key">Organization: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.administrativeContact.organization}}</span>
+                      </div>
+                    {{/if}}
+                    {{#if _dnsWhoisHistory.administrativeContact.telephone}}
+                      <div>
+                        <span class="p-key">Telephone: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.administrativeContact.telephone}}</span>
+                      </div>
+                    {{/if}}
+                    {{#if _dnsWhoisHistory.administrativeContact.fax}}
+                      <div>
+                        <span class="p-key">Fax: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.administrativeContact.fax}}</span>
+                      </div>
+                    {{/if}}
+                    {{#if _dnsWhoisHistory.administrativeContact.street1}}
+                      <div>
+                        <span class="p-key">Street: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.administrativeContact.street1}}</span>
+                      </div>
+                    {{/if}}
+                    {{#if _dnsWhoisHistory.administrativeContact.city}}
+                      <div>
+                        <span class="p-key">City: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.administrativeContact.city}}</span>
+                      </div>
+                    {{/if}}
+                    {{#if _dnsWhoisHistory.administrativeContact.state}}
+                      <div>
+                        <span class="p-key">State: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.administrativeContact.state}}</span>
+                      </div>
+                    {{/if}}
+                    {{#if _dnsWhoisHistory.administrativeContact.postalCode}}
+                      <div>
+                        <span class="p-key">Postal Code: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.administrativeContact.postalCode}}</span>
+                      </div>
+                    {{/if}}
+                    {{#if _dnsWhoisHistory.administrativeContact.country}}
+                      <div>
+                        <span class="p-key">Country: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.administrativeContact.country}}</span>
+                      </div>
+                    {{/if}}
+                    {{#if _dnsWhoisHistory.administrativeContact.countryCode}}
+                      <div>
+                        <span class="p-key">Country Code: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.administrativeContact.countryCode}}</span>
+                      </div>
+                    {{/if}}
+                  </div>
+                {{else}}
+                  <a
+                    href="#"
+                    class="expandable-title"
+                    {{on
+                      "click"
+                      (action
+                        "toggleExpandableTitle"
+                        "dnsWhoisHistory"
+                        "administrativeContact"
+                        _dnsWhoisHistoryIndex
+                      )
+                    }}
+                  >
+                    <span class="text">{{fa-icon
+                        icon="address-book"
+                        class="icon"
+                        fixedWidth=true
                       }}
-                    >
-                      <span class="text">{{fa-icon
-                          icon="address-book"
-                          class="icon"
-                          fixedWidth=true
-                        }}
-                        Technical Contact</span>
-                      {{fa-icon "angle-down"}}
-                    </a>
-                  {{/if}}
+                      Administrative Contact</span>
+                    {{fa-icon icon="angle-down"}}
+                  </a>
                 {{/if}}
+              {{/if}}
 
+              {{#if
+                (or
+                  _dnsWhoisHistory.technicalContact.name
+                  _dnsWhoisHistory.technicalContact.organization
+                )
+              }}
                 {{#if
-                  (or
-                    _dnsWhoisHistory.billingContact.name
-                    _dnsWhoisHistory.billingContact.organization
+                  (get
+                    expandableTitleStates
+                    (concat "dnsWhoisHistory" "technicalContact" _dnsWhoisHistoryIndex)
                   )
                 }}
-                  {{#if
-                    (get
-                      expandableTitleStates
-                      (concat "dnsWhoisHistory" "billingContact" _dnsWhoisHistoryIndex)
-                    )
-                  }}
-                    <a
-                      href="#"
-                      class="expandable-title"
-                      {{on
-                        "click"
-                        (action
-                          "toggleExpandableTitle"
-                          "dnsWhoisHistory"
-                          "billingContact"
-                          _dnsWhoisHistoryIndex
-                        )
+                  <a
+                    href="#"
+                    class="expandable-title"
+                    {{on
+                      "click"
+                      (action
+                        "toggleExpandableTitle"
+                        "dnsWhoisHistory"
+                        "technicalContact"
+                        _dnsWhoisHistoryIndex
+                      )
+                    }}
+                  >
+                    <span class="text">{{fa-icon
+                        icon="address-book"
+                        class="icon"
+                        fixedWidth=true
                       }}
-                    >
-                      <span class="text">{{fa-icon
-                          icon="address-book"
-                          class="icon"
-                          fixedWidth=true
-                        }}
-                        Billing Contact</span>
-                      {{fa-icon "angle-up"}}
-                    </a>
-                    <div>
-                      {{#if _dnsWhoisHistory.billingContact.name}}
-                        <div>
-                          <span class="p-key">Name: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.billingContact.name}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if _dnsWhoisHistory.billingContact.organization}}
-                        <div>
-                          <span class="p-key">Organization: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.billingContact.organization}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if _dnsWhoisHistory.billingContact.telephone}}
-                        <div>
-                          <span class="p-key">Telephone: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.billingContact.telephone}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if _dnsWhoisHistory.billingContact.fax}}
-                        <div>
-                          <span class="p-key">Fax: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.billingContact.fax}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if _dnsWhoisHistory.billingContact.street1}}
-                        <div>
-                          <span class="p-key">Street: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.billingContact.street1}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if _dnsWhoisHistory.billingContact.city}}
-                        <div>
-                          <span class="p-key">City: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.billingContact.city}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if _dnsWhoisHistory.billingContact.state}}
-                        <div>
-                          <span class="p-key">State: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.billingContact.state}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if _dnsWhoisHistory.billingContact.postalCode}}
-                        <div>
-                          <span class="p-key">Postal Code: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.billingContact.postalCode}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if _dnsWhoisHistory.billingContact.country}}
-                        <div>
-                          <span class="p-key">Country: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.billingContact.country}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if _dnsWhoisHistory.billingContact.countryCode}}
-                        <div>
-                          <span class="p-key">Country Code: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.billingContact.countryCode}}</span>
-                        </div>
-                      {{/if}}
-                    </div>
-                  {{else}}
-                    <a
-                      href="#"
-                      class="expandable-title"
-                      {{on
-                        "click"
-                        (action
-                          "toggleExpandableTitle"
-                          "dnsWhoisHistory"
-                          "billingContact"
-                          _dnsWhoisHistoryIndex
-                        )
+                      Technical Contact</span>
+                    {{fa-icon icon="angle-up"}}
+                  </a>
+                  <div>
+                    {{#if _dnsWhoisHistory.technicalContact.name}}
+                      <div>
+                        <span class="p-key">Name: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.technicalContact.name}}</span>
+                      </div>
+                    {{/if}}
+                    {{#if _dnsWhoisHistory.technicalContact.organization}}
+                      <div>
+                        <span class="p-key">Organization: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.technicalContact.organization}}</span>
+                      </div>
+                    {{/if}}
+                    {{#if _dnsWhoisHistory.technicalContact.telephone}}
+                      <div>
+                        <span class="p-key">Telephone: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.technicalContact.telephone}}</span>
+                      </div>
+                    {{/if}}
+                    {{#if _dnsWhoisHistory.technicalContact.fax}}
+                      <div>
+                        <span class="p-key">Fax: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.technicalContact.fax}}</span>
+                      </div>
+                    {{/if}}
+                    {{#if _dnsWhoisHistory.technicalContact.street1}}
+                      <div>
+                        <span class="p-key">Street: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.technicalContact.street1}}</span>
+                      </div>
+                    {{/if}}
+                    {{#if _dnsWhoisHistory.technicalContact.city}}
+                      <div>
+                        <span class="p-key">City: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.technicalContact.city}}</span>
+                      </div>
+                    {{/if}}
+                    {{#if _dnsWhoisHistory.technicalContact.state}}
+                      <div>
+                        <span class="p-key">State: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.technicalContact.state}}</span>
+                      </div>
+                    {{/if}}
+                    {{#if _dnsWhoisHistory.technicalContact.postalCode}}
+                      <div>
+                        <span class="p-key">Postal Code: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.technicalContact.postalCode}}</span>
+                      </div>
+                    {{/if}}
+                    {{#if _dnsWhoisHistory.technicalContact.country}}
+                      <div>
+                        <span class="p-key">Country: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.technicalContact.country}}</span>
+                      </div>
+                    {{/if}}
+                    {{#if _dnsWhoisHistory.technicalContact.countryCode}}
+                      <div>
+                        <span class="p-key">Country Code: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.technicalContact.countryCode}}</span>
+                      </div>
+                    {{/if}}
+                  </div>
+                {{else}}
+                  <a
+                    href="#"
+                    class="expandable-title"
+                    {{on
+                      "click"
+                      (action
+                        "toggleExpandableTitle"
+                        "dnsWhoisHistory"
+                        "technicalContact"
+                        _dnsWhoisHistoryIndex
+                      )
+                    }}
+                  >
+                    <span class="text">{{fa-icon
+                        icon="address-book"
+                        class="icon"
+                        fixedWidth=true
                       }}
-                    >
-                      <span class="text">{{fa-icon
-                          icon="address-book"
-                          class="icon"
-                          fixedWidth=true
-                        }}
-                        Billing Contact</span>
-                      {{fa-icon "angle-down"}}
-                    </a>
-                  {{/if}}
+                      Technical Contact</span>
+                    {{fa-icon icon="angle-down"}}
+                  </a>
                 {{/if}}
+              {{/if}}
 
+              {{#if
+                (or
+                  _dnsWhoisHistory.billingContact.name
+                  _dnsWhoisHistory.billingContact.organization
+                )
+              }}
                 {{#if
-                  (or
-                    _dnsWhoisHistory.zoneContact.name
-                    _dnsWhoisHistory.zoneContact.organization
+                  (get
+                    expandableTitleStates
+                    (concat "dnsWhoisHistory" "billingContact" _dnsWhoisHistoryIndex)
                   )
                 }}
-                  {{#if
-                    (get
-                      expandableTitleStates
-                      (concat "dnsWhoisHistory" "zoneContact" _dnsWhoisHistoryIndex)
-                    )
-                  }}
-                    <a
-                      href="#"
-                      class="expandable-title"
-                      {{on
-                        "click"
-                        (action
-                          "toggleExpandableTitle"
-                          "dnsWhoisHistory"
-                          "zoneContact"
-                          _dnsWhoisHistoryIndex
-                        )
+                  <a
+                    href="#"
+                    class="expandable-title"
+                    {{on
+                      "click"
+                      (action
+                        "toggleExpandableTitle"
+                        "dnsWhoisHistory"
+                        "billingContact"
+                        _dnsWhoisHistoryIndex
+                      )
+                    }}
+                  >
+                    <span class="text">{{fa-icon
+                        icon="address-book"
+                        class="icon"
+                        fixedWidth=true
                       }}
-                    >
-                      <span class="text">{{fa-icon
-                          icon="address-book"
-                          class="icon"
-                          fixedWidth=true
-                        }}
-                        Zone Contact</span>
-                      {{fa-icon "angle-up"}}
-                    </a>
-                    <div>
-                      {{#if _dnsWhoisHistory.zoneContact.name}}
-                        <div>
-                          <span class="p-key">Name: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.zoneContact.name}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if _dnsWhoisHistory.zoneContact.organization}}
-                        <div>
-                          <span class="p-key">Organization: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.zoneContact.organization}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if _dnsWhoisHistory.zoneContact.telephone}}
-                        <div>
-                          <span class="p-key">Telephone: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.zoneContact.telephone}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if _dnsWhoisHistory.zoneContact.fax}}
-                        <div>
-                          <span class="p-key">Fax: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.zoneContact.fax}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if _dnsWhoisHistory.zoneContact.street1}}
-                        <div>
-                          <span class="p-key">Street: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.zoneContact.street1}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if _dnsWhoisHistory.zoneContact.city}}
-                        <div>
-                          <span class="p-key">City: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.zoneContact.city}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if _dnsWhoisHistory.zoneContact.state}}
-                        <div>
-                          <span class="p-key">State: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.zoneContact.state}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if _dnsWhoisHistory.zoneContact.postalCode}}
-                        <div>
-                          <span class="p-key">Postal Code: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.zoneContact.postalCode}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if _dnsWhoisHistory.zoneContact.country}}
-                        <div>
-                          <span class="p-key">Country: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.zoneContact.country}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if _dnsWhoisHistory.zoneContact.countryCode}}
-                        <div>
-                          <span class="p-key">Country Code: </span>
-                          <span
-                            class="p-value"
-                          >{{_dnsWhoisHistory.zoneContact.countryCode}}</span>
-                        </div>
-                      {{/if}}
-                    </div>
-                  {{else}}
-                    <a
-                      href="#"
-                      class="expandable-title"
-                      {{on
-                        "click"
-                        (action
-                          "toggleExpandableTitle"
-                          "dnsWhoisHistory"
-                          "zoneContact"
-                          _dnsWhoisHistoryIndex
-                        )
+                      Billing Contact</span>
+                    {{fa-icon icon="angle-up"}}
+                  </a>
+                  <div>
+                    {{#if _dnsWhoisHistory.billingContact.name}}
+                      <div>
+                        <span class="p-key">Name: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.billingContact.name}}</span>
+                      </div>
+                    {{/if}}
+                    {{#if _dnsWhoisHistory.billingContact.organization}}
+                      <div>
+                        <span class="p-key">Organization: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.billingContact.organization}}</span>
+                      </div>
+                    {{/if}}
+                    {{#if _dnsWhoisHistory.billingContact.telephone}}
+                      <div>
+                        <span class="p-key">Telephone: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.billingContact.telephone}}</span>
+                      </div>
+                    {{/if}}
+                    {{#if _dnsWhoisHistory.billingContact.fax}}
+                      <div>
+                        <span class="p-key">Fax: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.billingContact.fax}}</span>
+                      </div>
+                    {{/if}}
+                    {{#if _dnsWhoisHistory.billingContact.street1}}
+                      <div>
+                        <span class="p-key">Street: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.billingContact.street1}}</span>
+                      </div>
+                    {{/if}}
+                    {{#if _dnsWhoisHistory.billingContact.city}}
+                      <div>
+                        <span class="p-key">City: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.billingContact.city}}</span>
+                      </div>
+                    {{/if}}
+                    {{#if _dnsWhoisHistory.billingContact.state}}
+                      <div>
+                        <span class="p-key">State: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.billingContact.state}}</span>
+                      </div>
+                    {{/if}}
+                    {{#if _dnsWhoisHistory.billingContact.postalCode}}
+                      <div>
+                        <span class="p-key">Postal Code: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.billingContact.postalCode}}</span>
+                      </div>
+                    {{/if}}
+                    {{#if _dnsWhoisHistory.billingContact.country}}
+                      <div>
+                        <span class="p-key">Country: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.billingContact.country}}</span>
+                      </div>
+                    {{/if}}
+                    {{#if _dnsWhoisHistory.billingContact.countryCode}}
+                      <div>
+                        <span class="p-key">Country Code: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.billingContact.countryCode}}</span>
+                      </div>
+                    {{/if}}
+                  </div>
+                {{else}}
+                  <a
+                    href="#"
+                    class="expandable-title"
+                    {{on
+                      "click"
+                      (action
+                        "toggleExpandableTitle"
+                        "dnsWhoisHistory"
+                        "billingContact"
+                        _dnsWhoisHistoryIndex
+                      )
+                    }}
+                  >
+                    <span class="text">{{fa-icon
+                        icon="address-book"
+                        class="icon"
+                        fixedWidth=true
                       }}
-                    >
-                      <span class="text">{{fa-icon
-                          icon="address-book"
-                          class="icon"
-                          fixedWidth=true
-                        }}
-                        Zone Contact</span>
-                      {{fa-icon "angle-down"}}
-                    </a>
-                  {{/if}}
+                      Billing Contact</span>
+                    {{fa-icon icon="angle-down"}}
+                  </a>
                 {{/if}}
-              </div>
-            {{else}}
-              <a
-                href="#"
-                class="expandable-title"
-                {{on
-                  "click"
-                  (action "toggleExpandableTitle" "dnsWhoisHistory" _dnsWhoisHistoryIndex)
+              {{/if}}
+
+              {{#if
+                (or
+                  _dnsWhoisHistory.zoneContact.name
+                  _dnsWhoisHistory.zoneContact.organization
+                )
+              }}
+                {{#if
+                  (get
+                    expandableTitleStates
+                    (concat "dnsWhoisHistory" "zoneContact" _dnsWhoisHistoryIndex)
+                  )
                 }}
-              >
-                <span class="text">{{fa-icon icon="history" class="icon" fixedWidth=true}}
-                  {{_dnsWhoisHistory.domainName}}
-                  ({{or
-                    _dnsWhoisHistory.updatedDate
-                    _dnsWhoisHistory.updatedDateRaw
-                    _dnsWhoisHistory.updatedDateISO8601
-                  }})</span>
-                {{fa-icon "angle-down"}}
-              </a>
+                  <a
+                    href="#"
+                    class="expandable-title"
+                    {{on
+                      "click"
+                      (action
+                        "toggleExpandableTitle"
+                        "dnsWhoisHistory"
+                        "zoneContact"
+                        _dnsWhoisHistoryIndex
+                      )
+                    }}
+                  >
+                    <span class="text">{{fa-icon
+                        icon="address-book"
+                        class="icon"
+                        fixedWidth=true
+                      }}
+                      Zone Contact</span>
+                    {{fa-icon icon="angle-up"}}
+                  </a>
+                  <div>
+                    {{#if _dnsWhoisHistory.zoneContact.name}}
+                      <div>
+                        <span class="p-key">Name: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.zoneContact.name}}</span>
+                      </div>
+                    {{/if}}
+                    {{#if _dnsWhoisHistory.zoneContact.organization}}
+                      <div>
+                        <span class="p-key">Organization: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.zoneContact.organization}}</span>
+                      </div>
+                    {{/if}}
+                    {{#if _dnsWhoisHistory.zoneContact.telephone}}
+                      <div>
+                        <span class="p-key">Telephone: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.zoneContact.telephone}}</span>
+                      </div>
+                    {{/if}}
+                    {{#if _dnsWhoisHistory.zoneContact.fax}}
+                      <div>
+                        <span class="p-key">Fax: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.zoneContact.fax}}</span>
+                      </div>
+                    {{/if}}
+                    {{#if _dnsWhoisHistory.zoneContact.street1}}
+                      <div>
+                        <span class="p-key">Street: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.zoneContact.street1}}</span>
+                      </div>
+                    {{/if}}
+                    {{#if _dnsWhoisHistory.zoneContact.city}}
+                      <div>
+                        <span class="p-key">City: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.zoneContact.city}}</span>
+                      </div>
+                    {{/if}}
+                    {{#if _dnsWhoisHistory.zoneContact.state}}
+                      <div>
+                        <span class="p-key">State: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.zoneContact.state}}</span>
+                      </div>
+                    {{/if}}
+                    {{#if _dnsWhoisHistory.zoneContact.postalCode}}
+                      <div>
+                        <span class="p-key">Postal Code: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.zoneContact.postalCode}}</span>
+                      </div>
+                    {{/if}}
+                    {{#if _dnsWhoisHistory.zoneContact.country}}
+                      <div>
+                        <span class="p-key">Country: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.zoneContact.country}}</span>
+                      </div>
+                    {{/if}}
+                    {{#if _dnsWhoisHistory.zoneContact.countryCode}}
+                      <div>
+                        <span class="p-key">Country Code: </span>
+                        <span
+                          class="p-value"
+                        >{{_dnsWhoisHistory.zoneContact.countryCode}}</span>
+                      </div>
+                    {{/if}}
+                  </div>
+                {{else}}
+                  <a
+                    href="#"
+                    class="expandable-title"
+                    {{on
+                      "click"
+                      (action
+                        "toggleExpandableTitle"
+                        "dnsWhoisHistory"
+                        "zoneContact"
+                        _dnsWhoisHistoryIndex
+                      )
+                    }}
+                  >
+                    <span class="text">{{fa-icon
+                        icon="address-book"
+                        class="icon"
+                        fixedWidth=true
+                      }}
+                      Zone Contact</span>
+                    {{fa-icon icon="angle-down"}}
+                  </a>
+                {{/if}}
+              {{/if}}
+            </div>
             {{/if}}
           </div>
         {{/each}}
@@ -1549,9 +1640,9 @@
 {{/if}}
 
 {{#if (eq block._state.activeTab "domainAvailability")}}
-  <div class="domain-availability">
+  <div class="domain-availability mt-2">
     {{#if getDomainAvailabilityIsRunning}}
-      {{fa-icon "spinner-third" size="lg" fixedWidth=true spin=true}}
+      {{fa-icon icon="spinner-third" size="lg" fixedWidth=true spin=true}}
     {{else if gettingDomainAvailabilityErrorMessage}}
       <div class="alert alert-danger mt-1">
         {{gettingDomainAvailabilityErrorMessage}}
@@ -1580,9 +1671,9 @@
 {{/if}}
 
 {{#if (eq block._state.activeTab "domainSubDomain")}}
-  <div class="domain-subdomain">
+  <div class="domain-subdomain mt-2">
     {{#if getDomainSubDomainIsRunning}}
-      {{fa-icon "spinner-third" size="lg" fixedWidth=true spin=true}}
+      {{fa-icon icon="spinner-third" size="lg" fixedWidth=true spin=true}}
     {{else if gettingDomainSubDomainErrorMessage}}
       <div class="alert alert-danger mt-1">
         {{gettingDomainSubDomainErrorMessage}}
@@ -1626,9 +1717,9 @@
 {{/if}}
 
 {{#if (eq block._state.activeTab "reverseNs")}}
-  <div class="reverse-ns">
+  <div class="reverse-ns mt-2">
     {{#if getReverseNsIsRunning}}
-      {{fa-icon "spinner-third" size="lg" fixedWidth=true spin=true}}
+      {{fa-icon icon="spinner-third" size="lg" fixedWidth=true spin=true}}
     {{else if gettingReverseNsErrorMessage}}
       <div class="alert alert-danger mt-1">
         {{gettingReverseNsErrorMessage}}
@@ -1643,10 +1734,7 @@
           <span class="no-results">No Results Found</span>
         {{else}}
           {{#each displayReverseNs as |_reverseNs _reverseNsIndex|}}
-            {{#if (gt _reverseNsIndex 0)}}
-              <br />
-            {{/if}}
-            <div class="reverse-ns-value">
+            <div class="grouped-item-container">
               {{#if _reverseNs.name}}
                 <div>
                   <span class="p-key">Name: </span>

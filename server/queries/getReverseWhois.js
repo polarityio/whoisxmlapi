@@ -1,6 +1,16 @@
 const { flow, map } = require('lodash/fp');
 const { requestsInParallel } = require('../request');
 
+/**
+ * https://reverse-whois.whoisxmlapi.com/api/documentation/making-requests
+ *
+ * For Reverse WHOIS lookups the integration supports annotated entities, email,
+ * full text search
+ *
+ * @param stringEntities
+ * @param options
+ * @returns {Promise<*>}
+ */
 const getReverseWhois = async (stringEntities, options) =>
   flow(
     map((entity) => ({
