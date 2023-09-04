@@ -41,7 +41,7 @@ const getWhoisLookupEntities = (entities) => {};
  * @param entities
  */
 const getReverseWhoisLookupEntities = (entities) => {
-  filter((entity) => {
+  return filter((entity) => {
     return (
       (entity.type === 'custom' || entity.isEmail || entity.type === 'string') &&
       !entity.isDomain &&
