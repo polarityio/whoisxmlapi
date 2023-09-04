@@ -17,24 +17,32 @@ const doLookup = async (entities, options, cb) => {
   try {
     Logger.debug({ entities }, 'Entities');
 
+    // Remove email, string, and custom (all text) entities if reverse whois is disabled
+    if (options.enableReserveWhois === false) {
+      entities = entities.filter(
+        (entity) =>
+          !(
+            entity.type === 'email' ||
+            entity.type === 'string' ||
+            (entity.type === 'custom' &&
+              entity.isDomain === false &&
+              entity.isIP === false)
+          )
+      );
+    }
+
     const { searchableEntities, nonSearchableEntities } = organizeEntities(entities);
 
-    const {
-      whois,
-      reverseWhois
-    } = await searchEntities(searchableEntities, options);
+    Logger.trace({ searchableEntities }, 'Searchable Entities');
+
+    const { whois, reverseWhois } = await searchEntities(searchableEntities, options);
 
     Logger.trace({
       whois,
       reverseWhois
     });
 
-    const lookupResults = assembleLookupResults(
-      entities,
-      whois,
-      reverseWhois,
-      options
-    );
+    const lookupResults = assembleLookupResults(entities, whois, reverseWhois, options);
 
     const ignoreResults = buildIgnoreResults(nonSearchableEntities);
 

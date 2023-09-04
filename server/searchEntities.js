@@ -6,13 +6,19 @@ const searchEntities = async (entities, options) => {
   const Logger = getLogger();
 
   const domainAndIpEntities = getEntitiesOfType(['IPv4', 'domain'], entities);
-  const stringAndEmailEntities = getEntitiesOfType(['email', 'string'], entities);
+  const stringEmailCustomEntities = getEntitiesOfType(
+    ['email', 'string', 'custom'],
+    entities
+  );
 
-  Logger.trace({ domainAndIpEntities, stringAndEmailEntities }, 'Sorted Entities for Lookup');
+  Logger.trace(
+    { domainAndIpEntities, stringEmailCustomEntities },
+    'Sorted Entities for Lookup'
+  );
 
   const [whois, reverseWhois] = await Promise.all([
     getWhois(domainAndIpEntities, options),
-    getReverseWhois(stringAndEmailEntities, options)
+    getReverseWhois(stringEmailCustomEntities, options)
   ]);
 
   return {
@@ -21,7 +27,12 @@ const searchEntities = async (entities, options) => {
   };
 };
 
-const getEntitiesOfType = (types, entities) =>
-  filter(flow(get('type'), includes(__, types)), entities);
+const getEntitiesOfType = (types, entities) => {
+  return filter((entity) => {
+    return get('types', entity).some((type) => {
+      return types.includes(type);
+    });
+  }, entities);
+};
 
 module.exports = searchEntities;

@@ -39,12 +39,24 @@ const getResultsForThisEntity = (entity, whois, reverseWhois) => {
 const createSummaryTags = ({ whois, reverseWhois }, options) => {
   let tags = [];
 
-  const registrant = getOr(null, 'registrant.organization', whois);
-  const createdDate = getOr(null, 'createdDate', whois);
+  // Registrant information is not always located in the same place
+  const registrant = getFirstValidPathValue(
+    'No registrant',
+    ['registrant.organization', 'registryData.registrant.organization'],
+    whois
+  );
+  const createdDate = getFirstValidPathValue(
+    null,
+    ['createdDate', 'registryData.createdDate'],
+    whois
+  );
+  const dataError = getOr(null, 'dataError', whois);
   const reverseWhoisCount = size(reverseWhois);
 
-  if (registrant) {
-    tags.push(registrant);
+  tags.push(registrant);
+
+  if (dataError) {
+    tags.push(dataError);
   }
 
   if (createdDate) {
@@ -59,6 +71,15 @@ const createSummaryTags = ({ whois, reverseWhois }, options) => {
   }
 
   return tags;
+};
+
+const getFirstValidPathValue = (defaultValue, paths, obj) => {
+  const firstValidPath = find((path) => {
+    const value = get(path, obj);
+    return value && size(value);
+  }, paths);
+
+  return getOr(defaultValue, firstValidPath, obj);
 };
 
 module.exports = assembleLookupResults;
