@@ -1,3 +1,8 @@
+<div class="copy-success-message {{if showCopyMessage "visible" "hidden"}}">
+  {{fa-icon icon="check" fixedWidth=true class="copy-success-icon"}}
+  Copied Information.
+</div>
+
 <div class="link-container">
   <a class="p-link" href="https://user.whoisxmlapi.com/products" target="_blank">
     View EndPoint Balance on
@@ -653,21 +658,18 @@
 
 {{#if (eq block._state.activeTab "reverseWhois")}}
   <div class="reverse-whois mt-2">
-    {{#each displayReverseWhois as |reverseWhois reverseWhoisIndex|}}
+    {{#each displayReverseWhois as |reverseWhois|}}
       <div class="reverse-whois-item">
         <button
           class="copy-btn"
           title="Copy to Clipboard"
-          {{action "copyData" reverseWhoisIndex}}
+          {{action "copyData" reverseWhois}}
         >
-          <div id={{reverseWhoisIndex}}>
+          <div>
             {{fa-icon icon="copy" class="icon" fixedWidth=true}}
             {{reverseWhois}}
           </div>
         </button>
-        {{#if (get showCopySuccessCheck reverseWhoisIndex)}}
-          {{fa-icon icon="check" class="icon" fixedWidth=true}} <span class="p-footnote">Copied to clipboard</span>
-        {{/if}}
       </div>
     {{/each}}
     {{#if (lt displayReverseWhois.length details.reverseWhois.length)}}
@@ -1694,8 +1696,10 @@
                 title="Copy to Clipboard"
                 {{action "copyData" subDomain}}
               >
-                <div id={{subDomain}}>{{fa-icon icon="copy" class="icon" fixedWidth=true}}
-                  {{subDomain}}</div>
+                <div>
+                  {{fa-icon icon="copy" class="icon" fixedWidth=true}}
+                  {{subDomain}}
+                </div>
               </button>
             </div>
           {{/each}}
