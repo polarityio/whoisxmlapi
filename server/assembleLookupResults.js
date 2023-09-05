@@ -81,7 +81,17 @@ const getWhoisIpSummaryTags = (whois) => {
       return getOr(null, 'registrant.organization', record);
     });
 
-    if (record && record.registrant && record.registrant.organization) {
+    const registrant = getFirstValidPathValue(
+      null,
+      [
+        'registrant.organization',
+        'registryData.registrant.organization',
+        'registrant.name'
+      ],
+      record
+    );
+
+    if (record) {
       tags.push(record.registrant.organization);
     }
 
@@ -113,7 +123,11 @@ const getWhoisDomainSummaryTags = (whois) => {
   // Registrant information is not always located in the same place
   const registrant = getFirstValidPathValue(
     null,
-    ['registrant.organization', 'registryData.registrant.organization'],
+    [
+      'registrant.organization',
+      'registryData.registrant.organization',
+      'registrant.name'
+    ],
     whois
   );
   const createdDate = getFirstValidPathValue(
