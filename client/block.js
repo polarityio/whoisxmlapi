@@ -11,7 +11,7 @@ polarity.export = PolarityComponent.extend({
     return Intl.DateTimeFormat().resolvedOptions().timeZone;
   }),
   expandableTitleStates: {},
-  showCopySuccessCheck: {},
+  showCopyMessage: false,
   tabRenderOrder: [
     'whois',
     'reverseWhois',
@@ -118,23 +118,20 @@ polarity.export = PolarityComponent.extend({
 
       this.get('block').notifyPropertyChange('data');
     },
-    copyData: function (element) {
-      const text =
-        typeof element === 'string'
-          ? document.getElementById(element).innerText
-          : element.innerText;
-
+    copyData: function (text) {
       navigator.clipboard
         .writeText(text)
         .then(() => {
-          this.set(`showCopySuccessCheck.${element}`, true);
+          this.set('showCopyMessage', true);
         })
         .catch((err) => {
           console.log('Error in copying text: ', err);
         })
         .finally(() => {
           setTimeout(() => {
-            this.set(`showCopySuccessCheck.${element}`, false);
+            if (!this.isDestroyed) {
+              this.set('showCopyMessage', false);
+            }
           }, 2000);
         });
     }
