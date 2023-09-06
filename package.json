@@ -1,7 +1,7 @@
 {
   "main": "./integration.js",
   "name": "whoisxmlapi",
-  "version": "3.0.2",
+  "version": "3.0.0",
   "private": true,
   "license": "MIT",
   "author": "Polarity",
